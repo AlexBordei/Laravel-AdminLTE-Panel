@@ -15,6 +15,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="{{ asset("plugins/fontawesome-free/css/all.min.css") }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset("dist/css/adminlte.min.css") }}">
+    <!-- App Style -->
+    <link rel="stylesheet" href="{{ asset("style.css") }}">
+    <link rel="stylesheet" href="{{ asset("dist/css/adminlte.min.css") }}">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -81,8 +86,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
-                <div class="row">
-                </div>
+                @yield('content')
                 <!-- /.row -->
             </div><!-- /.container-fluid -->
         </div>
@@ -123,5 +127,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="{{ asset("plugins/bootstrap/js/bootstrap.bundle.min.js") }}"></script>
 <!-- AdminLTE App -->
 <script src="{{ asset("dist/js/adminlte.min.js") }}"></script>
+<script src="//cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready( function () {
+        $('#mainTable').DataTable();
+    } );
+</script>
 </body>
 </html>

@@ -6,6 +6,7 @@ use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Models\Student;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Redirect;
 
 class StudentController extends Controller
 {
@@ -27,8 +28,7 @@ class StudentController extends Controller
      */
     public function create()
     {
-        $students = Student::all();
-        return $this->buildResponse('student.list', $students);
+        return $this->buildResponse('student.create');
     }
 
     /**
@@ -61,7 +61,7 @@ class StudentController extends Controller
      */
     public function edit(Student $student)
     {
-        //
+        return $this->buildResponse('student.edit');
     }
 
     /**
@@ -79,11 +79,21 @@ class StudentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Student  $student
-     * @return \Illuminate\Http\Response
+     * @param \App\Models\Student $student
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function destroy(Student $student)
     {
-        //
+
+        try {
+            $student->deleteOrFail();
+            return redirect()
+                ->back()
+                ->with('success', 'Student deleted successfully!');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withErrors(['msg' => 'There was an error deleting the student!']);
+        }
     }
 }
