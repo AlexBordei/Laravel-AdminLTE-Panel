@@ -7,7 +7,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'Laravel') }} | @yield('title', 'Default content')</title>
+    <title>{{ config('app.name', 'Laravel') }} | @yield('title')</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -70,7 +70,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Toti studentii</h1>
+                        <h1 class="m-0">@yield('title')</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -86,6 +86,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Main content -->
         <div class="content">
             <div class="container-fluid">
+                @if(session()->has('success'))
+                    <div class="alert alert-success">
+                        {{ session()->get('success') }}
+                    </div>
+                @endif
+                @if($errors->any())
+                    @foreach($errors->all() as $error)
+                        <div class="alert alert-danger">
+                            {{ $error }}
+                        </div>
+                    @endforeach
+                @endif
                 @yield('content')
                 <!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -114,7 +126,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             v.0.1
         </div>
         <!-- Default to the left -->
-        <strong>Copyright &copy; 2014-2021 <a href="https://whiz.ro">Whiz Center</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; {{date('Y')}} <a href="https://whiz.ro">Whiz Center</a>.</strong> All rights reserved.
     </footer>
 </div>
 <!-- ./wrapper -->
