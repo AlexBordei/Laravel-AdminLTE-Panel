@@ -17,5 +17,6 @@ class DatabaseSeeder extends Seeder
         (new UserSeeder())->run();
         (new MenuSeeder())->run();
         (new MenuOptionSeeder())->run();
+        (new StudentSeeder())->run();
     }
 }

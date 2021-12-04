@@ -35,11 +35,31 @@ class StudentController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\StoreStudentRequest  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreStudentRequest $request)
     {
-        //
+        $validated = $request->validate([
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
+            'phone' => 'required|max:255',
+            'email' => 'required|email|max:255',
+            'birth_date' => 'required|date',
+        ]);
+
+        $date = strtotime($request->get('birth_date'));
+
+        Student::create(
+            [
+                'first_name' => $request->get('first_name'),
+                'last_name' => $request->get('last_name'),
+                'phone' => $request->get('phone'),
+                'email' => $request->get('email'),
+                'birth_date' => date('Y-m-d', $date),
+            ]
+        );
+
+        return redirect('/student')->with('success', 'Student has been added successfully!');
     }
 
     /**
@@ -50,7 +70,6 @@ class StudentController extends Controller
      */
     public function show(Student $student)
     {
-        //
     }
 
     /**
@@ -61,7 +80,10 @@ class StudentController extends Controller
      */
     public function edit(Student $student)
     {
-        return $this->buildResponse('student.edit');
+        $date = strtotime($student->birth_date);
+
+        $student->birth_date = Date('d-m-Y', $date);
+        return $this->buildResponse('student.edit', $student);
     }
 
     /**
@@ -69,11 +91,28 @@ class StudentController extends Controller
      *
      * @param  \App\Http\Requests\UpdateStudentRequest  $request
      * @param  \App\Models\Student  $student
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateStudentRequest $request, Student $student)
     {
-        //
+        $validated = $request->validate([
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
+            'phone' => 'required|max:255',
+            'email' => 'required|email|max:255',
+            'birth_date' => 'required|date',
+        ]);
+        $date = strtotime($request->get('birth_date'));
+
+        $student->fill([
+            'first_name' => $request->get('first_name'),
+            'last_name' => $request->get('last_name'),
+            'phone' => $request->get('phone'),
+            'email' => $request->get('email'),
+            'birth_date' => date('Y-m-d', $date),
+        ])->save();
+
+        return back()->with('success', 'Student successfully updated!');
     }
 
     /**

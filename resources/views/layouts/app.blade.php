@@ -18,6 +18,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- App Style -->
     <link rel="stylesheet" href="{{ asset("style.css") }}">
     <link rel="stylesheet" href="{{ asset("dist/css/adminlte.min.css") }}">
+    <link rel="stylesheet" href="{{ asset("plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css") }}">
     <link rel="stylesheet" href="//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
 
 </head>
@@ -139,10 +140,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="{{ asset("plugins/bootstrap/js/bootstrap.bundle.min.js") }}"></script>
 <!-- AdminLTE App -->
 <script src="{{ asset("dist/js/adminlte.min.js") }}"></script>
+<script src="{{ asset("plugins/moment/moment.min.js") }}"></script>
+<script src="{{ asset("plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js") }}"></script>
 <script src="//cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 <script>
     $(document).ready( function () {
         $('#mainTable').DataTable();
+        $('#student_birth_date').datetimepicker(
+            {
+                viewMode: 'years',
+                format: 'DD/MM/YYYY'
+            }
+        );
     } );
 </script>
 </body>
