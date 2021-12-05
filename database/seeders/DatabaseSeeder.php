@@ -13,10 +13,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-//         \App\Models\User::factory(10)->create();
         (new UserSeeder())->run();
         (new MenuSeeder())->run();
         (new MenuOptionSeeder())->run();
         (new StudentSeeder())->run();
+        (new InstrumentSeeder())->run();
+        (new TeacherSeeder())->run();
     }
 }

@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\AppController;
+use App\Http\Controllers\InstrumentController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,6 +26,9 @@ Route::get('/dashboard', [AppController::class, 'dashboard'])->middleware(['auth
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('/student', StudentController::class);
+    Route::resource('/teacher', TeacherController::class);
+    Route::resource('/room', RoomController::class);
+    Route::resource('/instrument', InstrumentController::class);
 });
 
 require __DIR__.'/auth.php';

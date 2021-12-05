@@ -53,7 +53,68 @@ class MenuOptionSeeder extends Seeder
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
 
+            $parentMenuOption = new MenuOptions();
+            $parentMenuOption->title = 'Teachers';
+            $parentMenuOption->url = '/teacher';
+            $parentMenuOption->icon = 'fa-tachometer-alt';
+            $parentMenuOption->menu_id = $menu->id;
+            $parentMenuOption->save();
 
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'Create new teacher';
+            $menuOption->url = '/teacher/create';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
+
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'List all teachers';
+            $menuOption->url = '/teacher';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
+
+            $parentMenuOption = new MenuOptions();
+            $parentMenuOption->title = 'Rooms';
+            $parentMenuOption->url = '/room';
+            $parentMenuOption->icon = 'fa-tachometer-alt';
+            $parentMenuOption->menu_id = $menu->id;
+            $parentMenuOption->save();
+
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'Create new room';
+            $menuOption->url = '/room/create';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
+
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'List all rooms';
+            $menuOption->url = '/room';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
+
+            $parentMenuOption = new MenuOptions();
+            $parentMenuOption->title = 'Instruments';
+            $parentMenuOption->url = '/instrument';
+            $parentMenuOption->icon = 'fa-tachometer-alt';
+            $parentMenuOption->menu_id = $menu->id;
+            $parentMenuOption->save();
+
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'Create new instrument';
+            $menuOption->url = '/instrument/create';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
+
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'List all instruments';
+            $menuOption->url = '/instrument';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
         }
     }
 }
