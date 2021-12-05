@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         (new MenuOptionSeeder())->run();
         (new StudentSeeder())->run();
         (new InstrumentSeeder())->run();
+        (new RoomSeeder())->run();
         (new TeacherSeeder())->run();
     }
 }

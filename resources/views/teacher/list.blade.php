@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'List students')
+@section('title', 'List teachers')
 
 @section('content')
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <a href="{{ url('/student/create') }}"><input class="btn btn-primary btn-flat" type="submit" value="Add student" /></a>
+                    <a href="{{ url('/teacher/create') }}"><input class="btn btn-primary btn-flat" type="submit" value="Add teacher" /></a>
                 </div>
                 <div class="card-body table-responsive p-0">
                     @if(! empty($data))
@@ -20,6 +20,9 @@
                             <th>Phone</th>
                             <th>Email</th>
                             <th>Birth date</th>
+                            <th>Google Calendar Id</th>
+                            <th>Instruments</th>
+                            <th>Preferred Room</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -32,9 +35,18 @@
                             <td>{{ $elem->phone }}</td>
                             <td>{{ $elem->email }}</td>
                             <td>{{ (new Carbon\Carbon($elem->birth_date))->format('d-m-Y') }}</td>
+                            <td>{{ $elem->google_calendar_id }}</td>
                             <td>
-                                <a href="{{ url('/student/' . $elem->id . '/edit') }}"><button class="btn btn-secondary btn-flat">Edit</button></a>
-                                <form action="{{ url('/student', ['id' => $elem->id]) }}" method="post" style="display: inline-block">
+                                @foreach($elem['instruments'] as $instrument)
+                                    <a class="btn btn-primary btn-sm" href="/instrument/{{$instrument->id}}">{{$instrument->name}}</a>
+                                @endforeach
+                            </td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" href="/room/{{$elem['room']->id}}">{{$elem['room']->name}}</a>
+                            </td>
+                            <td>
+                                <a href="{{ url('/teacher/' . $elem->id . '/edit') }}"><button class="btn btn-secondary btn-flat">Edit</button></a>
+                                <form action="{{ url('/teacher', ['id' => $elem->id]) }}" method="post" style="display: inline-block">
                                     <input class="btn btn-danger btn-flat" type="submit" value="Delete" />
                                     @method('delete')
                                     @csrf

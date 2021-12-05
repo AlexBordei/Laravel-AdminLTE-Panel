@@ -21,16 +21,15 @@ class CreateTeachersTable extends Migration
             $table->string('email');
             $table->date('birth_date');
             $table->string('google_calendar_id')->nullable();
+            $table->string('instrument_ids')->nullable();
             $table->timestamps();
         });
 
         Schema::table('teachers',function (Blueprint $table){
 
-            $table->unsignedBigInteger('instrument_id')->nullable();
             $table->unsignedBigInteger('room_id')->nullable();
 
-            $table->foreign('instrument_id')->references('id')->on('instruments');
-            $table->foreign('room_id')->references('id')->on('rooms');
+            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('set null');;
         });
     }
 

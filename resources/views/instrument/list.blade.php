@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'List students')
+@section('title', 'List instruments')
 
 @section('content')
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <a href="{{ url('/student/create') }}"><input class="btn btn-primary btn-flat" type="submit" value="Add student" /></a>
+                    <a href="{{ url('/instrument/create') }}"><input class="btn btn-primary btn-flat" type="submit" value="Add instrument" /></a>
                 </div>
                 <div class="card-body table-responsive p-0">
                     @if(! empty($data))
@@ -15,11 +15,7 @@
                         <thead>
                         <tr>
                             <th>ID</th>
-                            <th>First name</th>
-                            <th>Last name</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                            <th>Birth date</th>
+                            <th>Name</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -27,14 +23,10 @@
                         @foreach( $data as $elem )
                         <tr>
                             <td>{{ $elem->id }}</td>
-                            <td>{{ $elem->first_name }}</td>
-                            <td>{{ $elem->last_name }}</td>
-                            <td>{{ $elem->phone }}</td>
-                            <td>{{ $elem->email }}</td>
-                            <td>{{ (new Carbon\Carbon($elem->birth_date))->format('d-m-Y') }}</td>
+                            <td>{{ $elem->name }}</td>
                             <td>
-                                <a href="{{ url('/student/' . $elem->id . '/edit') }}"><button class="btn btn-secondary btn-flat">Edit</button></a>
-                                <form action="{{ url('/student', ['id' => $elem->id]) }}" method="post" style="display: inline-block">
+                                <a href="{{ url('/instrument/' . $elem->id . '/edit') }}"><button class="btn btn-secondary btn-flat">Edit</button></a>
+                                <form action="{{ url('/instrument', ['id' => $elem->id]) }}" method="post" style="display: inline-block">
                                     <input class="btn btn-danger btn-flat" type="submit" value="Delete" />
                                     @method('delete')
                                     @csrf

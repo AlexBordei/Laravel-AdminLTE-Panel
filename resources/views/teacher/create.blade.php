@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Create new student')
+@section('title', 'Create new teacher')
 
 @section('content')
 <div class="row">
     <div class="col-md-12">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">Add student</h3>
+                <h3 class="card-title">Add teacher</h3>
             </div>
-            <form action="{{ route('student.store') }}" method="POST">
+            <form action="{{ route('teacher.store') }}" method="POST">
                 @csrf
                 <div class="card-body">
                     {{--First name--}}
@@ -35,13 +35,39 @@
                     {{--Birth date--}}
                     <div class="form-group">
                         <label>Birth date:</label>
-                        <div class="input-group date" id="student_birth_date" data-target-input="nearest">
+                        <div class="input-group date" id="teacher_birth_date" data-target-input="nearest">
                             <div class="row">
-                                <input type="text" name="birth_date" class="form-control datetimepicker-input col-6" data-target="#student_birth_date">
-                                <div class="input-group-append col-6" data-target="#student_birth_date" data-toggle="datetimepicker">
+                                <input type="text" name="birth_date" class="form-control datetimepicker-input col-6" data-target="#teacher_birth_date">
+                                <div class="input-group-append col-6" data-target="#teacher_birth_date" data-toggle="datetimepicker">
                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    {{--Google Calendar id--}}
+                    <div class="form-group">
+                        <label for="google_calendar_id">Google Calendar Id</label>
+                        <input type="text" name="google_calendar_id" class="form-control" placeholder="Google Calendar Id">
+                    </div>
+                    {{--Instrument ids--}}
+                    <div class="form-group">
+                        <label>Instruments</label>
+                        <select multiple="" class="custom-select" name="instrument_ids[]">
+                            @foreach($data['instruments'] as $instrument)
+                                <option value="{{ $instrument->id }}">{{ $instrument->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    {{-- Room id--}}
+                    <div class="form-group">
+                        <label for="room_id">Room</label>
+                        <div class="form-group">
+                            @foreach($data['rooms'] as $room)
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="room_id" value="{{ $room->id }}">
+                                    <label class="form-check-label">{{ $room->name }}</label>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>

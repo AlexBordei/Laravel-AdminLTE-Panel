@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTeacherRequest;
 use App\Http\Requests\UpdateTeacherRequest;
+use App\Models\Instrument;
+use App\Models\Room;
 use App\Models\Teacher;
 
 class TeacherController extends Controller
@@ -16,6 +18,15 @@ class TeacherController extends Controller
     public function index()
     {
         $teachers = Teacher::all();
+
+
+        $index = 0;
+        foreach ($teachers as $teacher) {
+            $teachers[$index]['instruments'] = Instrument::whereIn('id', json_decode($teacher->instrument_ids))->get(['id', 'name']);
+            $teachers[$index]['room'] = Room::where('id', $teacher->room_id)->first(['id', 'name']);
+            $index++;
+        }
+
         return $this->buildResponse('teacher.list', $teachers);
     }
 
@@ -26,7 +37,9 @@ class TeacherController extends Controller
      */
     public function create()
     {
-        return $this->buildResponse('teacher.create');
+        $instruments = Instrument::all(['id', 'name']);
+        $rooms = Room::all(['id', 'name']);
+        return $this->buildResponse('teacher.create', ['instruments' => $instruments, 'rooms' => $rooms]);
     }
 
     /**
@@ -43,6 +56,9 @@ class TeacherController extends Controller
             'phone' => 'required|max:255',
             'email' => 'required|email|max:255',
             'birth_date' => 'required|date',
+            'instrument_ids' => 'required|array',
+            'instrument_ids.*' => 'exists:instruments,id',
+            'room_id' => 'exists:rooms,id',
         ]);
 
         $date = strtotime($request->get('birth_date'));
@@ -54,6 +70,9 @@ class TeacherController extends Controller
                 'phone' => $request->get('phone'),
                 'email' => $request->get('email'),
                 'birth_date' => date('Y-m-d', $date),
+                'google_calendar_id' => $request->get('google_calendar_id'),
+                'instrument_ids' => json_encode($request->get('instrument_ids')),
+                'room_id' => $request->get('room_id')
             ]
         );
 
@@ -78,6 +97,9 @@ class TeacherController extends Controller
      */
     public function edit(Teacher $teacher)
     {
+
+        $teacher['instruments'] = Instrument::all(['id', 'name']);
+        $teacher['rooms'] = Room::all(['id', 'name']);
         $date = strtotime($teacher->birth_date);
 
         $teacher->birth_date = Date('d-m-Y', $date);
@@ -93,13 +115,18 @@ class TeacherController extends Controller
      */
     public function update(UpdateTeacherRequest $request, Teacher $teacher)
     {
+        //TODO: fix format date bug
         $validated = $request->validate([
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
             'phone' => 'required|max:255',
             'email' => 'required|email|max:255',
             'birth_date' => 'required|date',
+            'instrument_ids' => 'required|array',
+            'instrument_ids.*' => 'exists:instruments,id',
+            'room_id' => 'exists:rooms,id',
         ]);
+
         $date = strtotime($request->get('birth_date'));
 
         $teacher->fill([
@@ -108,6 +135,9 @@ class TeacherController extends Controller
             'phone' => $request->get('phone'),
             'email' => $request->get('email'),
             'birth_date' => date('Y-m-d', $date),
+            'google_calendar_id' => $request->get('google_calendar_id'),
+            'instrument_ids' => json_encode($request->get('instrument_ids')),
+            'room_id' => $request->get('room_id')
         ])->save();
 
         return back()->with('success', 'Teacher successfully updated!');
