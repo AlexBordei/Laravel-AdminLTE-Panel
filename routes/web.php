@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AppController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\InstrumentController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\StudentController;
@@ -29,6 +30,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/teacher', TeacherController::class);
     Route::resource('/room', RoomController::class);
     Route::resource('/instrument', InstrumentController::class);
+    Route::resource('/event', EventController::class);
 });
 
 require __DIR__.'/auth.php';
+
+
+//TODO: Adauga buton de delete in formularele de edit

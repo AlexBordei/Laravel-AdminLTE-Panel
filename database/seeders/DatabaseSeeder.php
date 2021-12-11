@@ -20,5 +20,6 @@ class DatabaseSeeder extends Seeder
         (new InstrumentSeeder())->run();
         (new RoomSeeder())->run();
         (new TeacherSeeder())->run();
+        (new EventSeeder())->run();
     }
 }

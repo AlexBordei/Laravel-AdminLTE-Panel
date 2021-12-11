@@ -115,6 +115,27 @@ class MenuOptionSeeder extends Seeder
             $menuOption->icon = 'fa-circle';
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
+
+            $parentMenuOption = new MenuOptions();
+            $parentMenuOption->title = 'Calendar';
+            $parentMenuOption->url = '/event';
+            $parentMenuOption->icon = 'fa-tachometer-alt';
+            $parentMenuOption->menu_id = $menu->id;
+            $parentMenuOption->save();
+
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'Add new event';
+            $menuOption->url = '/event/create';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
+
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'List all events';
+            $menuOption->url = '/event';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
         }
     }
 }

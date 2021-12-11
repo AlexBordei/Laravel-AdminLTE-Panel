@@ -16,11 +16,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset("dist/css/adminlte.min.css") }}">
     <!-- App Style -->
-    <link rel="stylesheet" href="{{ asset("style.css") }}">
     <link rel="stylesheet" href="{{ asset("dist/css/adminlte.min.css") }}">
     <link rel="stylesheet" href="{{ asset("plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css") }}">
     <link rel="stylesheet" href="//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+    <link href="//cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="{{ asset("plugins/daterangepicker/daterangepicker.css") }}">
+    <link rel="stylesheet" href="{{ asset("style.css") }}">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -143,6 +146,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="{{ asset("plugins/moment/moment.min.js") }}"></script>
 <script src="{{ asset("plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js") }}"></script>
 <script src="//cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{{ asset("plugins/daterangepicker/daterangepicker.js") }}"></script>
 <script>
     $(document).ready( function () {
         $('#mainTable').DataTable();
@@ -158,6 +163,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 format: 'DD/MM/YYYY'
             }
         );
+
+        $('#students-list').select2();
+        $('#teachers-list').select2();
+        $('#instruments-list').select2();
+        $('#rooms-list').select2();
+
+        $('#event_starting_date').datetimepicker();
+
+        $('#reservationtime').daterangepicker({
+            timePicker: true,
+            timePickerIncrement: 30,
+            locale: {
+                format: 'DD-MM-YYYY HH:mm'
+            }
+        })
     } );
 </script>
 </body>
