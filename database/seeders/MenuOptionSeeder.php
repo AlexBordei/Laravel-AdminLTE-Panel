@@ -136,6 +136,29 @@ class MenuOptionSeeder extends Seeder
             $menuOption->icon = 'fa-circle';
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
+
+            $parentMenuOption = new MenuOptions();
+            $parentMenuOption->title = 'Subscriptions';
+            $parentMenuOption->url = '/subscription';
+            $parentMenuOption->icon = 'fa-tachometer-alt';
+            $parentMenuOption->menu_id = $menu->id;
+            $parentMenuOption->save();
+
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'List all';
+            $menuOption->url = '/subscription';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
+
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'Subscription types';
+            $menuOption->url = '/subscription_type';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
+
+
         }
     }
 }

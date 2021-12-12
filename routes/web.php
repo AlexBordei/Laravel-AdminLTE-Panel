@@ -5,6 +5,8 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\InstrumentController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\SubscriptionTypeController;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +33,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/room', RoomController::class);
     Route::resource('/instrument', InstrumentController::class);
     Route::resource('/event', EventController::class);
+    Route::resource('/subscription', SubscriptionController::class);
+    Route::resource('/subscription_type', SubscriptionTypeController::class);
 });
 
 require __DIR__.'/auth.php';
