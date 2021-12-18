@@ -22,6 +22,7 @@ class CreateEventsTable extends Migration
             $table->dateTime('starting');
             $table->dateTime('ending');
             $table->enum('status', ['new', 'confirmed', 'canceled'])->default('new');
+            $table->string('google_event_id')->nullable();
             $table->timestamps();
         });
 

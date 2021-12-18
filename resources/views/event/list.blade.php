@@ -7,7 +7,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <a href="{{ url('/event/create') }}"><input class="btn btn-primary btn-flat" type="submit" value="Add room" /></a>
+                    <a href="{{ url('/event/create') }}"><input class="btn btn-primary btn-flat" type="submit" value="Add event" /></a>
                 </div>
                 <div class="card-body table-responsive p-0">
                     @if(! empty($data))

@@ -9,7 +9,11 @@ use App\Models\Instrument;
 use App\Models\Room;
 use App\Models\Student;
 use App\Models\Teacher;
+use Carbon\Carbon;
+use Google\Service\Exception;
 use Illuminate\Http\Request;
+use Spatie\GoogleCalendar\Exceptions\InvalidConfiguration;
+use Spatie\GoogleCalendar\GoogleCalendar;
 
 class EventController extends Controller
 {
@@ -78,6 +82,8 @@ class EventController extends Controller
         $starting_date = \DateTime::createFromFormat('d-m-Y H:i', $starting);
         $ending_date = \DateTime::createFromFormat('d-m-Y H:i', $ending);
 
+        $g_event_response = $this->create_google_event($request);
+
         Event::create(
             [
                 'student_id' => $request->get('student_id'),
@@ -87,6 +93,7 @@ class EventController extends Controller
                 'starting' => $starting_date,
                 'ending' => $ending_date,
                 'status' => $request->get('status'),
+                'google_event_id' => $g_event_response->id
             ]
         );
 
@@ -162,6 +169,8 @@ class EventController extends Controller
         $starting_date = \DateTime::createFromFormat('d-m-Y H:i', $starting);
         $ending_date = \DateTime::createFromFormat('d-m-Y H:i', $ending);
 
+        $g_event_response = $this->update_google_event($request, $event);
+
         $event->fill([
             'student_id' => $request->get('student_id'),
             'teacher_id' => $request->get('teacher_id'),
@@ -170,6 +179,7 @@ class EventController extends Controller
             'starting' => $starting_date,
             'ending' => $ending_date,
             'status' => $request->get('status'),
+            'google_event_id' => $g_event_response->id
         ])->save();
 
         return redirect()->route('event.index')->with('success', 'Event successfully updated!');
@@ -183,8 +193,9 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
-
         try {
+            $this->delete_google_event($event);
+
             $event->deleteOrFail();
             return redirect()
                 ->back()
@@ -194,5 +205,96 @@ class EventController extends Controller
                 ->back()
                 ->withErrors(['msg' => 'There was an error deleting the event!']);
         }
+    }
+
+    private function create_google_event($request) {
+
+        $starting = explode(' - ', $request->get('time_interval'))[0];
+        $ending = explode(' - ', $request->get('time_interval'))[1];
+
+        $starting_date = \DateTime::createFromFormat('d-m-Y H:i', $starting);
+        $ending_date = \DateTime::createFromFormat('d-m-Y H:i', $ending);
+
+
+        $instrument = Instrument::where('id', $request->get('instrument_id'))->first();
+        $student = Student::where('id', $request->get('student_id'))->first();
+        $room = Room::where('id', $request->get('room_id'))->first();
+        $teacher = Teacher::where('id', $request->get('teacher_id'))->first();
+
+        $g_event = [];
+
+        $g_event['name'] = $instrument->name . ' ' . $student->first_name . ' ' . $student->last_name;
+        $g_event['description']  = "Student: " . ' ' . $student->first_name . ' ' . $student->last_name . "\n";
+        $g_event['description']  .= "Room: " . ' ' . $room->name . "\n";
+        $g_event['description']  .= "Instrument: " . ' ' . $instrument->name . "\n";
+        $g_event['description']  .= "Status: " . ' ' . $request->get('status') . "\n";
+        $g_event['startDateTime']  = Carbon::create($starting_date);
+        $g_event['endDateTime']  = Carbon::create($ending_date);
+
+        $g_event_response = null;
+
+        try {
+            if (!empty($teacher->google_calendar_id)) {
+                try {
+                    $g_event_response = \Spatie\GoogleCalendar\Event::create($g_event, $teacher->google_calendar_id);
+                } catch (Exception $e) {
+                    $g_event_response = \Spatie\GoogleCalendar\Event::create($g_event);
+                }
+            } else {
+                $g_event_response = \Spatie\GoogleCalendar\Event::create($g_event);
+            }
+        }
+        catch (Exception $e) {
+            // TODO: add this to error notifications
+            return false;
+        }
+
+        return $g_event_response;
+    }
+    private function delete_google_event($event) {
+        if(!empty($event->get('google_event_id'))) {
+            try {
+                $teacher = Teacher::where('id', $event->teacher_id)->first();
+
+                $g_event = null;
+                if (!empty($teacher->google_calendar_id)) {
+                    try {
+                        $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id, $teacher->google_calendar_id);
+                    } catch (Exception $e) {
+                        $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id);
+                    }
+                } else {
+                    $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id);
+                }
+                $g_event->delete();
+                return true;
+            } catch (Exception $e) {
+                // TODO: add this to error notifications
+            }
+        }
+        return false;
+    }
+    private function update_google_event($request, $event) {
+        if(!empty($event->get('google_event_id'))) {
+            try {
+                $teacher = Teacher::where('id', $event->teacher_id)->first();
+
+                $g_event = null;
+                if (!empty($teacher->google_calendar_id)) {
+                    try {
+                        $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id, $teacher->google_calendar_id);
+                    } catch (Exception $e) {
+                        $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id);
+                    }
+                } else {
+                    $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id);
+                }
+                $g_event->delete();
+                return $this->create_google_event($request);
+            } catch (Exception $e) {
+                // TODO: add this to error notifications
+            }
+        }
+        return false;
     }
 }

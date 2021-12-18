@@ -9,10 +9,9 @@ class Event extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['student_id', 'teacher_id', 'instrument_id', 'room_id', 'starting', 'ending', 'status'];
+    protected $fillable = ['student_id', 'teacher_id', 'instrument_id', 'room_id', 'starting', 'ending', 'status', 'google_event_id'];
 
     protected $dates = ['starting', 'ending'];
-
 
     /**
      * Get the teacher associated with the event.
