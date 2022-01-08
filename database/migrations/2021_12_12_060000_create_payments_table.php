@@ -15,9 +15,10 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('student_id');
+            $table->unsignedBigInteger('user_id');
             $table->double('amount');
             $table->enum('payment_method', ['cash', 'bank_transfer', 'online'])->default('cash');
+            $table->enum('status', ['pending', 'paid', 'canceled', 'postponed'])->default('pending');
             $table->timestamps();
         });
     }

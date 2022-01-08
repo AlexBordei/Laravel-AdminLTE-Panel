@@ -22,5 +22,7 @@ class DatabaseSeeder extends Seeder
         (new TeacherSeeder())->run();
         (new EventSeeder())->run();
         (new SubscriptionTypeSeeder())->run();
+        (new PaymentSeeder())->run();
+        (new SubscriptionSeeder())->run();
     }
 }

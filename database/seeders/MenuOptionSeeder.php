@@ -158,6 +158,26 @@ class MenuOptionSeeder extends Seeder
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
 
+            $parentMenuOption = new MenuOptions();
+            $parentMenuOption->title = 'Payments';
+            $parentMenuOption->url = '/payment';
+            $parentMenuOption->icon = 'fa-tachometer-alt';
+            $parentMenuOption->menu_id = $menu->id;
+            $parentMenuOption->save();
+
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'Create new payment';
+            $menuOption->url = '/payment/create';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
+
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'List all payments';
+            $menuOption->url = '/payment';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
 
         }
     }

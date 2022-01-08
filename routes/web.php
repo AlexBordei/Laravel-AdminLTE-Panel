@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InstrumentController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubscriptionController;
@@ -35,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/event', EventController::class);
     Route::resource('/subscription', SubscriptionController::class);
     Route::resource('/subscription_type', SubscriptionTypeController::class);
+    Route::resource('/payment', PaymentController::class);
 });
 
 require __DIR__.'/auth.php';

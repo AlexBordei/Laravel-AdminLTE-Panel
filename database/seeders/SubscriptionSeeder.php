@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Subscription;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class SubscriptionSeeder extends Seeder
@@ -13,6 +15,12 @@ class SubscriptionSeeder extends Seeder
      */
     public function run()
     {
-        //
+            $subscription = new Subscription();
+            $subscription->student_id = 2;
+            $subscription->subscription_type_id = 3;
+            $subscription->starting = Carbon::now();
+            $subscription->ending = Carbon::tomorrow();
+            $subscription->save();
     }
 }
+

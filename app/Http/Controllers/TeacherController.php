@@ -19,7 +19,6 @@ class TeacherController extends Controller
     {
         $teachers = Teacher::all();
 
-
         $index = 0;
         foreach ($teachers as $teacher) {
             $teachers[$index]['instruments'] = Instrument::whereIn('id', json_decode($teacher->instrument_ids))->get(['id', 'name']);
