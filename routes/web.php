@@ -40,6 +40,3 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
-
-//TODO: Adauga buton de delete in formularele de edit

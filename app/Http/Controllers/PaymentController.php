@@ -92,6 +92,11 @@ class PaymentController extends Controller
 
 
         $payment->fill($request->all())->save();
+        $subscription = Subscription::where('id', $request->subscription_id)->first();
+        if(! empty($subscription)) {
+            $subscription->payment_id = $payment->id;
+            $subscription->save();
+        }
 
         return back()->with('success', 'Payment successfully updated!');
     }
@@ -115,5 +120,15 @@ class PaymentController extends Controller
                 ->back()
                 ->withErrors(['msg' => 'There was an error deleting the payment!']);
         }
+    }
+
+    public static function createPaymentRequest($amount) {
+        $payment = new Payment();
+        $payment->amount = $amount;
+        $payment->status = 'pending';
+
+        $payment->save();
+
+        return $payment;
     }
 }

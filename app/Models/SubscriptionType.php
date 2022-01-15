@@ -12,6 +12,7 @@ class SubscriptionType extends Model
     protected $fillable = [
         'name',
         'sessions_number',
+        'sessions_per_week',
         'price',
         'duration',
         'instruments_number',

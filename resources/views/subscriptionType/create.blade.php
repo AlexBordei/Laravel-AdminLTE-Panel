@@ -25,6 +25,10 @@
                         <input type="number" name="sessions_number" class="form-control" placeholder="Number of sessions">
                     </div>
                     <div class="form-group">
+                        <label for="sessions_per_week">Number of sessions per week</label>
+                        <input type="number" name="sessions_per_week" class="form-control" placeholder="Number of sessions per week">
+                    </div>
+                    <div class="form-group">
                         <label for="duration">Duration</label>
                         <input type="number" name="duration" class="form-control" placeholder="Duration">
                     </div>

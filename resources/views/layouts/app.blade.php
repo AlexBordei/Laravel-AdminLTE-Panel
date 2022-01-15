@@ -169,6 +169,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
         $('#teachers-list').select2();
         $('#instruments-list').select2();
         $('#rooms-list').select2();
+        $('#payment_ids-list').select2();
+        $('#subscription_type-list').select2();
+        $('#subscription_type-list').on('select2:select', function (e) {
+            var sessions_number = $(this).find(":selected").data('sessions_number');
+
+            if(typeof sessions_number !== 'undefined') {
+                alert(sessions_number);
+            }
+        });
 
         $('#event_starting_date').datetimepicker();
 
@@ -178,7 +187,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
             locale: {
                 format: 'DD-MM-YYYY HH:mm'
             }
-        })
+        });
+
+        $('#subscription_starting_date').datetimepicker(
+            {
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            }
+        );
     } );
 </script>
 </body>

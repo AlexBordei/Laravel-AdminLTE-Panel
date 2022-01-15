@@ -18,6 +18,7 @@ class CreateSubscriptionTypesTable extends Migration
             $table->string('name');
             $table->double('price');
             $table->integer('sessions_number');
+            $table->integer('sessions_per_week')->default(1);
             $table->integer('duration');
             $table->integer('instruments_number');
             $table->integer('students_number');

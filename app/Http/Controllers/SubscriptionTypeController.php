@@ -47,6 +47,7 @@ class SubscriptionTypeController extends Controller
             'duration' => 'required|numeric',
             'instruments_number' => 'required|numeric',
             'students_number' => 'required|numeric',
+            'sessions_per_week' => 'required|numeric|lt:sessions_number',
         ]);
 
         SubscriptionType::create($request->all());
@@ -91,6 +92,7 @@ class SubscriptionTypeController extends Controller
             'duration' => 'required|numeric',
             'instruments_number' => 'required|numeric',
             'students_number' => 'required|numeric',
+            'sessions_per_week' => 'required|numeric|lt:sessions_number',
         ]);
 
         $subscriptionType->fill($request->all())->save();

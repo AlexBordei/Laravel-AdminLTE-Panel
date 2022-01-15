@@ -21,6 +21,7 @@ class SubscriptionTypeSeeder extends Seeder
         $subscription_type->duration = 0.5;
         $subscription_type->instruments_number = 1;
         $subscription_type->students_number = 1;
+        $subscription_type->sessions_per_week = 1;
         $subscription_type->save();
 
         $subscription_type = new SubscriptionType();
@@ -30,6 +31,7 @@ class SubscriptionTypeSeeder extends Seeder
         $subscription_type->duration = 1;
         $subscription_type->instruments_number = 1;
         $subscription_type->students_number = 1;
+        $subscription_type->sessions_per_week = 1;
         $subscription_type->save();
 
         $subscription_type = new SubscriptionType();
@@ -38,6 +40,7 @@ class SubscriptionTypeSeeder extends Seeder
         $subscription_type->sessions_number = 4;
         $subscription_type->duration = 1;
         $subscription_type->instruments_number = 1;
+        $subscription_type->sessions_per_week = 1;
         $subscription_type->students_number = 1;
         $subscription_type->save();
 
@@ -48,6 +51,7 @@ class SubscriptionTypeSeeder extends Seeder
         $subscription_type->duration = 1;
         $subscription_type->instruments_number = 2;
         $subscription_type->students_number = 1;
+        $subscription_type->sessions_per_week = 2;
         $subscription_type->save();
 
         $subscription_type = new SubscriptionType();
@@ -56,6 +60,7 @@ class SubscriptionTypeSeeder extends Seeder
         $subscription_type->sessions_number = 4;
         $subscription_type->duration = 1;
         $subscription_type->instruments_number = 1;
+        $subscription_type->sessions_per_week = 1;
         $subscription_type->students_number = 1;
         $subscription_type->save();
 
@@ -66,6 +71,7 @@ class SubscriptionTypeSeeder extends Seeder
         $subscription_type->duration = 0.5;
         $subscription_type->instruments_number = 1;
         $subscription_type->students_number = 1;
+        $subscription_type->sessions_per_week = 2;
         $subscription_type->save();
 
         $subscription_type = new SubscriptionType();

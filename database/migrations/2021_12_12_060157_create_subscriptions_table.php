@@ -20,6 +20,7 @@ class CreateSubscriptionsTable extends Migration
             $table->dateTime('starting');
             $table->dateTime('ending');
             $table->unsignedBigInteger('payment_id')->nullable();
+            $table->enum('status', ['active', 'canceled', 'expired', 'pending'])->default('pending');
             $table->timestamps();
         });
 

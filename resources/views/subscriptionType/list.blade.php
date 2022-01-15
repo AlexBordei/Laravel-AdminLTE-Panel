@@ -18,6 +18,7 @@
                             <th>Name</th>
                             <th>Price</th>
                             <th>Number of sessions</th>
+                            <th>Number of sessions per week</th>
                             <th>Duration</th>
                             <th>Number of instruments</th>
                             <th>Number of students</th>
@@ -31,6 +32,7 @@
                             <td>{{ $elem->name }}</td>
                             <td>{{ $elem->price }}</td>
                             <td>{{ $elem->sessions_number }}</td>
+                            <td>{{ $elem->sessions_per_week }}</td>
                             <td>{{ $elem->duration }}</td>
                             <td>{{ $elem->instruments_number }}</td>
                             <td>{{ $elem->students_number }}</td>
