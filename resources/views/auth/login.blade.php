@@ -65,7 +65,7 @@
                     <!-- /.col -->
                 </div>
             </form>
-{{--            TODO: Imeplement social media authentication --}}
+{{--            TODO: Implement social media authentication --}}
 {{--            <div class="social-auth-links text-center mb-3">--}}
 {{--                <p>- OR -</p>--}}
 {{--                <a href="#" class="btn btn-block btn-primary">--}}

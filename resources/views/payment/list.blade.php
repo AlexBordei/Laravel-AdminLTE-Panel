@@ -30,20 +30,32 @@
                         <tr>
                             <td>{{ $elem->id }}</td>
                             <td>
-                                <a href="/user/{{ $elem->user['id'] }}">{{ $elem->user['name'] }}</a>
+                                @if(isset($elem->user['id']) && isset($elem->user['name']))
+                                    <a href="/user/{{ $elem->user['id'] }}">{{ $elem->user['name'] }}</a>
+                                @endif
                             </td>
                             @if(! empty($elem->subscription_id))
                                 <td>
-                                    <a href="/subscription/{{ $elem->subscription_id }}">{{ $elem->subscription_id }}</a>
+                                    <a href="/subscription/{{ $elem->subscription_id }}/edit">{{ $elem->subscription_id }}</a>
                                 </td>
                             @else
                                 <td>N/A</td>
                             @endif
                             <td>{{ $elem->amount }}</td>
-                            <td>{{ $elem->payment_method }}</td>
-                            <td>{{ $elem->status }}</td>
-                            <td>{{ $elem->created_at }}</td>
-                            <td>{{ $elem->updated_at }}</td>
+                            <td>
+                                @switch($elem->payment_method )
+                                    @case ('bank_transfer')
+                                        Bank transfer
+                                    @break
+                                    @default
+                                        {{ ucfirst($elem->payment_method) }}
+                                    @break
+                                @endswitch
+
+                                </td>
+                            <td>{{ ucfirst($elem->status) }}</td>
+                            <td>{{ $elem->created_at->format('d/m/Y H:i:s') }}</td>
+                            <td>{{ $elem->updated_at->format('d/m/Y H:i:s') }}</td>
                             <td>
                                 <a href="{{ url('/payment/' . $elem->id . '/edit') }}"><button class="btn btn-secondary btn-flat">Edit</button></a>
                                 <form action="{{ url('/payment', ['id' => $elem->id]) }}" method="post" style="display: inline-block">

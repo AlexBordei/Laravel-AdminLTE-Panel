@@ -34,15 +34,19 @@
                             <td>{{ $elem->last_name }}</td>
                             <td>{{ $elem->phone }}</td>
                             <td>{{ $elem->email }}</td>
-                            <td>{{ (new Carbon\Carbon($elem->birth_date))->format('d-m-Y') }}</td>
+                            <td>{{ ! empty($elem->birth_date) ? (new Carbon\Carbon($elem->birth_date))->format('d/m/Y') : '' }}</td>
                             <td>{{ $elem->google_calendar_id }}</td>
                             <td>
-                                @foreach($elem['instruments'] as $instrument)
-                                    <a class="btn btn-primary btn-sm" href="/instrument/{{$instrument->id}}">{{$instrument->name}}</a>
-                                @endforeach
+                                @if(isset($elem['instruments']))
+                                    @foreach($elem['instruments'] as $instrument)
+                                        <a class="btn btn-primary btn-sm" href="/instrument/{{$instrument->id}}">{{$instrument->name}}</a>
+                                    @endforeach
+                                @endif
                             </td>
                             <td>
-                                <a class="btn btn-primary btn-sm" href="/room/{{$elem['room']->id}}">{{$elem['room']->name}}</a>
+                                @if(isset($elem['room']))
+                                    <a class="btn btn-primary btn-sm" href="/room/{{$elem['room']->id}}">{{$elem['room']->name}}</a>
+                                @endif
                             </td>
                             <td>
                                 <a href="{{ url('/teacher/' . $elem->id . '/edit') }}"><button class="btn btn-secondary btn-flat">Edit</button></a>

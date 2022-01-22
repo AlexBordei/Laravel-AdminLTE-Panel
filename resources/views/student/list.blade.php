@@ -31,7 +31,7 @@
                             <td>{{ $elem->last_name }}</td>
                             <td>{{ $elem->phone }}</td>
                             <td>{{ $elem->email }}</td>
-                            <td>{{ (new Carbon\Carbon($elem->birth_date))->format('d-m-Y') }}</td>
+                            <td>{{ !empty($elem->birth_date) ? (new Carbon\Carbon($elem->birth_date))->format('d-m-Y') : '' }}</td>
                             <td>
                                 <a href="{{ url('/student/' . $elem->id . '/edit') }}"><button class="btn btn-secondary btn-flat">Edit</button></a>
                                 <form action="{{ url('/student', ['id' => $elem->id]) }}" method="post" style="display: inline-block">

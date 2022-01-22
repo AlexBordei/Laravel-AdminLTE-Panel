@@ -17,7 +17,7 @@ class CreatePaymentsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->double('amount');
-            $table->enum('payment_method', ['cash', 'bank_transfer', 'online'])->default('cash');
+            $table->enum('payment_method', ['cash', 'bank_transfer', 'online', 'card'])->default('cash');
             $table->enum('status', ['pending', 'paid', 'canceled', 'postponed'])->default('pending');
             $table->timestamps();
         });

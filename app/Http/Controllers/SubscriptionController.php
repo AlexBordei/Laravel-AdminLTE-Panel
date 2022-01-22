@@ -42,12 +42,11 @@ class SubscriptionController extends Controller
 
      public function store(StoreEventRequest $request)
      {
-         // TODO: create a payment request
          $validated = $request->validate([
              'student_id' => 'required|exists:students,id',
              'subscription_type_id' => 'required|exists:subscription_types,id',
              'status' => 'required|in:active,canceled,expired,pending',
-             'starting' => 'required|max:255',
+             'starting' => 'required|date_format:d/m/Y',
          ]);
 
          $subscription_type = SubscriptionType::where('id', $request->subscription_type_id)->first();
@@ -55,17 +54,17 @@ class SubscriptionController extends Controller
          $payment_request = PaymentController::createPaymentRequest($subscription_type->price);
          $starting_date = \DateTime::createFromFormat('d/m/Y', $request->starting);
 
-         // TODO: this should be auto-calculated
          $ending_date = Carbon::createFromFormat('d/m/Y',  $request->starting);
          $ending_date->addWeeks((int)$subscription_type->sessions_number -1);
+
          Subscription::create(
              [
                  'student_id' => $request->get('student_id'),
                  'subscription_type_id' => $request->get('subscription_type_id'),
                  'payment_id' => $payment_request->id,
                  'status' => $request->get('status'),
-                 'starting' => $starting_date,
-                 'ending' => $ending_date,
+                 'starting' => $starting_date->format('Y-m-d'),
+                 'ending' => $ending_date->format('Y-m-d'),
              ]
          );
 
@@ -104,6 +103,12 @@ class SubscriptionController extends Controller
         $subscription->payments_ids = $payments_ids;
         $subscription->statuses = $statuses;
 
+        $starting_date = strtotime($subscription->starting);
+        $ending_date = strtotime($subscription->ending);
+
+        $subscription->starting = Date('d/m/Y', $starting_date);
+        $subscription->ending = Date('d/m/Y', $ending_date);
+
         return $this->buildResponse('subscription.edit', $subscription);
     }
 
@@ -112,8 +117,8 @@ class SubscriptionController extends Controller
             'student_id' => 'required|exists:students,id',
             'subscription_type_id' => 'required|exists:subscription_types,id',
             'status' => 'required|in:active,canceled,expired,pending',
-            'starting' => 'required|max:255',
-            'payment_id' => 'required|exists:payments,id',
+            'starting' => 'required|date_format:d/m/Y',
+            'payment_id' => 'nullable|exists:payments,id',
         ]);
         $starting_date = Carbon::createFromFormat('d/m/Y', $request->starting);
 
@@ -121,12 +126,16 @@ class SubscriptionController extends Controller
         $ending_date = Carbon::createFromFormat('d/m/Y',  $request->starting);
         $ending_date->addWeeks((int)$subscription_type->sessions_number -1);
 
-        $request->ending_date = $ending_date;
-        $request->starting_date = $starting_date;
-
-        // TODO: we finished here
-
-        $subscription->fill($request->all())->save();
+        $subscription->fill(
+            [
+                'student_id' => $request->student_id,
+                'subscription_type_id' => $request->subscription_type_id,
+                'starting' => $starting_date->format('Y-m-d'),
+                'ending' => $ending_date->format('Y-m-d'),
+                'payment_id' => $request->payment_id,
+                'status' => $request->status,
+            ]
+        )->save();
 
         return back()->with('success', 'Subscription successfully updated!');
     }

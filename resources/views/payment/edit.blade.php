@@ -43,6 +43,7 @@
                                         <option value="cash" {{$data['payment_method'] === 'cash' ? 'selected="selected' : ''}}>Cash</option>
                                         <option value="bank_transfer" {{$data['payment_method'] === 'bank_transfer' ? 'selected="selected' : ''}}>Bank transfer</option>
                                         <option value="card" {{$data['payment_method'] === 'card' ? 'selected="selected' : ''}}>Card</option>
+                                        <option value="online" {{$data['payment_method'] === 'online' ? 'selected="selected' : ''}}>Online</option>
                                     </select>
                                 </div>
                             </div>
@@ -74,6 +75,14 @@
                                             <option value="{{ $subscription->id }}" {{$data->subscription_id === $subscription->id ? 'selected="selected' : ''}}>ID: {{ $subscription->id }}</option>
                                         @endforeach
                                     </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="activate_subscription">
+                                    <label class="form-check-label" for="activate_subscription">Activate subscription</label>
                                 </div>
                             </div>
                         </div>

@@ -42,6 +42,7 @@
                                     <option value="cash">Cash</option>
                                     <option value="bank_transfer">Bank transfer</option>
                                     <option value="card">Card</option>
+                                    <option value="online">Online</option>
                                 </select>
                             </div>
                         </div>
@@ -69,6 +70,14 @@
                                         <option value="{{ $subscription->id }}">ID: {{ $subscription->id }}</option>
                                     @endforeach
                                 </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" name="activate_subscription">
+                                <label class="form-check-label" for="activate_subscription">Activate subscription</label>
                             </div>
                         </div>
                     </div>

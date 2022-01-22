@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Models\Student;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Redirect;
+use Carbon\Carbon;
 
 class StudentController extends Controller
 {
@@ -44,10 +43,10 @@ class StudentController extends Controller
             'last_name' => 'required|max:255',
             'phone' => 'required|max:255',
             'email' => 'required|email|max:255',
-            'birth_date' => 'required|date',
+            'birth_date' => 'required|date_format:d/m/Y',
         ]);
 
-        $date = strtotime($request->get('birth_date'));
+        $date = Carbon::createFromFormat('d/m/Y', $request->get('birth_date'));
 
         Student::create(
             [
@@ -55,7 +54,7 @@ class StudentController extends Controller
                 'last_name' => $request->get('last_name'),
                 'phone' => $request->get('phone'),
                 'email' => $request->get('email'),
-                'birth_date' => date('Y-m-d', $date),
+                'birth_date' => $date->format('Y-m-d'),
             ]
         );
 
@@ -82,7 +81,7 @@ class StudentController extends Controller
     {
         $date = strtotime($student->birth_date);
 
-        $student->birth_date = Date('d-m-Y', $date);
+        $student->birth_date = Date('d/m/Y', $date);
         return $this->buildResponse('student.edit', $student);
     }
 
@@ -100,16 +99,16 @@ class StudentController extends Controller
             'last_name' => 'required|max:255',
             'phone' => 'required|max:255',
             'email' => 'required|email|max:255',
-            'birth_date' => 'required|date',
+            'birth_date' => 'required|date_format:d/m/Y',
         ]);
-        $date = strtotime($request->get('birth_date'));
+        $date = Carbon::createFromFormat('d/m/Y', $request->get('birth_date'));
 
         $student->fill([
             'first_name' => $request->get('first_name'),
             'last_name' => $request->get('last_name'),
             'phone' => $request->get('phone'),
             'email' => $request->get('email'),
-            'birth_date' => date('Y-m-d', $date),
+            'birth_date' => $date->format('Y-m-d'),
         ])->save();
 
         return back()->with('success', 'Student successfully updated!');

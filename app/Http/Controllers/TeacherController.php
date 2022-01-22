@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateTeacherRequest;
 use App\Models\Instrument;
 use App\Models\Room;
 use App\Models\Teacher;
+use Carbon\Carbon;
 
 class TeacherController extends Controller
 {
@@ -54,13 +55,13 @@ class TeacherController extends Controller
             'last_name' => 'required|max:255',
             'phone' => 'required|max:255',
             'email' => 'required|email|max:255',
-            'birth_date' => 'required|date',
+            'birth_date' => 'required|date_format:d/m/Y',
             'instrument_ids' => 'required|array',
             'instrument_ids.*' => 'exists:instruments,id',
             'room_id' => 'exists:rooms,id',
         ]);
 
-        $date = strtotime($request->get('birth_date'));
+        $date = Carbon::createFromFormat('d/m/Y', $request->get('birth_date'));
 
         Teacher::create(
             [
@@ -68,7 +69,7 @@ class TeacherController extends Controller
                 'last_name' => $request->get('last_name'),
                 'phone' => $request->get('phone'),
                 'email' => $request->get('email'),
-                'birth_date' => date('Y-m-d', $date),
+                'birth_date' => $date->format('Y-m-d'),
                 'google_calendar_id' => $request->get('google_calendar_id'),
                 'instrument_ids' => json_encode($request->get('instrument_ids')),
                 'room_id' => $request->get('room_id')
@@ -101,7 +102,7 @@ class TeacherController extends Controller
         $teacher['rooms'] = Room::all(['id', 'name']);
         $date = strtotime($teacher->birth_date);
 
-        $teacher->birth_date = Date('d-m-Y', $date);
+        $teacher->birth_date = Date('d/m/Y', $date);
         return $this->buildResponse('teacher.edit', $teacher);
     }
 
@@ -114,26 +115,25 @@ class TeacherController extends Controller
      */
     public function update(UpdateTeacherRequest $request, Teacher $teacher)
     {
-        //TODO: fix format date bug
         $validated = $request->validate([
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
             'phone' => 'required|max:255',
             'email' => 'required|email|max:255',
-            'birth_date' => 'required|date',
+            'birth_date' => 'required|date_format:d/m/Y',
             'instrument_ids' => 'required|array',
             'instrument_ids.*' => 'exists:instruments,id',
             'room_id' => 'exists:rooms,id',
         ]);
 
-        $date = strtotime($request->get('birth_date'));
+        $date = Carbon::createFromFormat('d/m/Y', $request->get('birth_date'));
 
         $teacher->fill([
             'first_name' => $request->get('first_name'),
             'last_name' => $request->get('last_name'),
             'phone' => $request->get('phone'),
             'email' => $request->get('email'),
-            'birth_date' => date('Y-m-d', $date),
+            'birth_date' => $date->format('Y-m-d'),
             'google_calendar_id' => $request->get('google_calendar_id'),
             'instrument_ids' => json_encode($request->get('instrument_ids')),
             'room_id' => $request->get('room_id')

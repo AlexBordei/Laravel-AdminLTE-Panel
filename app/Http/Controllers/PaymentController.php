@@ -4,13 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePaymentRequest;
 use App\Http\Requests\UpdatePaymentRequest;
-use App\Http\Requests\UpdateTeacherRequest;
-use App\Models\Instrument;
 use App\Models\Payment;
 use App\Models\Subscription;
-use App\Models\Teacher;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class PaymentController extends Controller
@@ -50,7 +46,7 @@ class PaymentController extends Controller
         $validated = $request->validate([
             'user_id' => 'required|numeric',
             'amount' => 'required|numeric',
-            'payment_method' => ['required', Rule::in('cash', 'bank_transfer', 'card')],
+            'payment_method' => ['required', Rule::in('cash', 'bank_transfer', 'card', 'online')],
             'status' => ['required', Rule::in('paid', 'pending', 'canceled', 'postponed')],
             'subscription_id' => 'numeric|exists:App\Models\Subscription,id'
         ]);
@@ -61,6 +57,9 @@ class PaymentController extends Controller
             $subscription = Subscription::where('id', $request->subscription_id)->first();
             if(!empty($subscription)) {
                 $subscription->payment_id = $payment->id;
+                if($payment->status === 'paid' && isset($request->activate_subscription)) {
+                    $subscription->status = 'active';
+                }
                 $subscription->save();
             }
         }
@@ -81,11 +80,10 @@ class PaymentController extends Controller
     }
 
     public function update(UpdatePaymentRequest $request, Payment $payment) {
-        //TODO: fix format date bug
         $validated = $request->validate([
             'user_id' => 'required|numeric',
             'amount' => 'required|numeric',
-            'payment_method' => ['required', Rule::in('cash', 'bank_transfer', 'card')],
+            'payment_method' => ['required', Rule::in('cash', 'bank_transfer', 'card', 'online')],
             'status' => ['required', Rule::in('paid', 'pending', 'canceled', 'postponed')],
             'subscription_id' => 'numeric|exists:App\Models\Subscription,id'
         ]);
@@ -95,10 +93,13 @@ class PaymentController extends Controller
         $subscription = Subscription::where('id', $request->subscription_id)->first();
         if(! empty($subscription)) {
             $subscription->payment_id = $payment->id;
+            if($payment->status === 'paid' && isset($request->activate_subscription)) {
+                $subscription->status = 'active';
+            }
             $subscription->save();
         }
 
-        return back()->with('success', 'Payment successfully updated!');
+        return redirect('/payment')->with('success', 'Payment successfully updated!');
     }
 
     /**

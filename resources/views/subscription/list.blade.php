@@ -30,8 +30,8 @@
                                     <td>{{ $elem->id }}</td>
                                     <td><a href="/student/{{ $elem->student->id }}">{{ $elem->student->first_name }} {{ $elem->student->last_name }}</a></td>
                                     <td><a href="{{ $elem->subscription_type->id }}">{{ $elem->subscription_type->name }}</a></td>
-                                    <td>{{ (new Carbon\Carbon($elem->starting))->format('d-m-Y') }}</td>
-                                    <td>{{ (new Carbon\Carbon($elem->ending))->format('d-m-Y') }}</td>
+                                    <td>{{ !empty($elem->starting) ? (new Carbon\Carbon($elem->starting))->format('d/m/Y') : '' }}</td>
+                                    <td>{{ !empty($elem->ending) ? (new Carbon\Carbon($elem->ending))->format('d/m/Y') : '' }}</td>
                                     <td><a href="{{ $elem->payment_id }}">{{ $elem->payment_id }}</a></td>
                                     <td>
                                         @switch($elem->status)
