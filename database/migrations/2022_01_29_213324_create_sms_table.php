@@ -13,7 +13,7 @@ class CreateSmsTable extends Migration
      */
     public function up()
     {
-        Schema::create('Sms', function (Blueprint $table) {
+        Schema::create('sms', function (Blueprint $table) {
             $table->id();
             $table->string('from');
             $table->string('to');
@@ -31,7 +31,7 @@ class CreateSmsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('Sms');
+        Schema::dropIfExists('sms');
     }
 }
 // TODO: create endpoint for updating the message status from Android app

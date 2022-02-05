@@ -8,6 +8,7 @@
             <div class="card">
                 <div class="card-header">
                     <a href="{{ url('/sms/create') }}"><input class="btn btn-primary btn-flat" type="submit" value="Send SMS" /></a>
+                    Android Gateway last seen: {{ !empty($data->sms_service_status->format('d/m/Y H:i:s')) ? $data->sms_service_status->format('d/m/Y H:i:s') : 'N/A' }}
                 </div>
                 <div class="card-body table-responsive p-0">
                     @if(! empty($data))

@@ -21,3 +21,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::middleware('auth:api')->post('/sms/{sms}', [APISmsController::class, 'update']);
+Route::middleware('auth:api')->post('service/sms', [APISmsController::class, 'serviceStatus']);

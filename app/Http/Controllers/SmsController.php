@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Instrument;
 use App\Models\Room;
+use App\Models\Service;
 use App\Models\Sms;
 use Illuminate\Http\Request;
 use PhpMqtt\Client\ConnectionSettings;
@@ -19,6 +20,11 @@ class SmsController extends Controller
     public function index()
     {
         $sms = Sms::all();
+
+        $sms_service = Service::where('name', 'sms_service')->first();
+        if(!empty($sms_service)) {
+            $sms->sms_service_status = $sms_service->last_seen;
+        }
 
         return $this->buildResponse('sms.list', $sms);
     }
@@ -121,7 +127,7 @@ class SmsController extends Controller
 
         $mqtt->disconnect();
 
-        $sms->update(['status' => 'pending']);
+        $sms->update(['status' => 'pending', 'error' => '']);
 
         return back()->with('success', 'SMS request has been posted successfully!');
 

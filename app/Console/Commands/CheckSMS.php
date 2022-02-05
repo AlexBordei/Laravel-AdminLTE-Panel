@@ -40,7 +40,7 @@ class CheckSMS extends Command
     public function handle()
     {
         $date = Carbon::now();
-        $date = $date->subMinutes(10);
+        $date = $date->subMinutes(5);
 
         print($date);
         $sms = Sms::where(['status' => 'pending'])
