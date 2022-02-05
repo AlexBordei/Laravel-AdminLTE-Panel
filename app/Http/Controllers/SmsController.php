@@ -6,6 +6,7 @@ use App\Models\Instrument;
 use App\Models\Room;
 use App\Models\Service;
 use App\Models\Sms;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use PhpMqtt\Client\ConnectionSettings;
 use PhpMqtt\Client\MqttClient;
@@ -23,7 +24,14 @@ class SmsController extends Controller
 
         $sms_service = Service::where('name', 'sms_service')->first();
         if(!empty($sms_service)) {
-            $sms->sms_service_status = $sms_service->last_seen;
+            $actual_date = Carbon::now();
+            $actual_date = $actual_date->subMinutes(1);
+
+            $sms->sms_service_status = "Bad. Service is not responding";
+            if($sms_service->last_seen > $actual_date) {
+                $sms->sms_service_status = "All good. Service is up";
+            }
+
         }
 
         return $this->buildResponse('sms.list', $sms);
