@@ -180,22 +180,22 @@ class MenuOptionSeeder extends Seeder
             $menuOption->save();
 
             $parentMenuOption = new MenuOptions();
-            $parentMenuOption->title = 'Messages';
-            $parentMenuOption->url = '/message';
+            $parentMenuOption->title = 'SMS';
+            $parentMenuOption->url = '/sms';
             $parentMenuOption->icon = 'fa-tachometer-alt';
             $parentMenuOption->menu_id = $menu->id;
             $parentMenuOption->save();
 
             $menuOption = new MenuOptions();
-            $menuOption->title = 'Create new message';
-            $menuOption->url = '/message/create';
+            $menuOption->title = 'Create new SMS';
+            $menuOption->url = '/sms/create';
             $menuOption->icon = 'fa-circle';
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
 
             $menuOption = new MenuOptions();
-            $menuOption->title = 'List all messages';
-            $menuOption->url = '/message';
+            $menuOption->title = 'List all SMS\'s';
+            $menuOption->url = '/sms';
             $menuOption->icon = 'fa-circle';
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();

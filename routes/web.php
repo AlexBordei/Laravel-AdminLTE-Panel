@@ -5,6 +5,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\InstrumentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\SmsController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SubscriptionTypeController;
@@ -37,6 +38,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/subscription', SubscriptionController::class);
     Route::resource('/subscription_type', SubscriptionTypeController::class);
     Route::resource('/payment', PaymentController::class);
+    Route::resource('/sms', SmsController::class);
+    Route::post('/sms/resend/{sms}', [SmsController::class, 'resend']);
 });
 
 require __DIR__.'/auth.php';

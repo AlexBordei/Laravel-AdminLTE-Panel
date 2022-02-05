@@ -1,9 +1,9 @@
 <?php
 
 
+use App\Http\Controllers\API\APISmsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Spatie\GoogleCalendar\Event;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,21 +16,8 @@ use Spatie\GoogleCalendar\Event;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-Route::get('/test', function(){
-    $event = new Event;
-
-    $event->name = 'A new event';
-    $event->startDateTime = Carbon\Carbon::now();
-    $event->endDateTime = Carbon\Carbon::now()->addHour();
-
-    $event->save();
-
-    var_dump($event);
-
-    return;
-});
+Route::middleware('auth:api')->post('/sms/{sms}', [APISmsController::class, 'update']);
