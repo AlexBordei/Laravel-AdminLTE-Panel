@@ -75,8 +75,7 @@ class SubscriptionController extends Controller
     {
 
         try {
-            $subscription->status = 'canceled';
-            $subscription->save();
+            $subscription->deleteOrFail();
             return redirect()
                 ->back()
                 ->with('success', 'Subscription canceled successfully!');

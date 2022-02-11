@@ -60,7 +60,7 @@
                                     <td>
                                         <a href="{{ url('/subscription/' . $elem->id . '/edit') }}"><button class="btn btn-secondary btn-flat">Edit</button></a>
                                         <form action="{{ url('/subscription', ['id' => $elem->id]) }}" method="post" style="display: inline-block">
-                                            <input class="btn btn-danger btn-flat" type="submit" value="Cancel" />
+                                            <input class="btn btn-danger btn-flat" type="submit" value="Delete" />
                                             @method('delete')
                                             @csrf
                                         </form>

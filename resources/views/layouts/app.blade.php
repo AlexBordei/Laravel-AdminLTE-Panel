@@ -150,7 +150,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="{{ asset("plugins/daterangepicker/daterangepicker.js") }}"></script>
 <script>
     $(document).ready( function () {
-        $('#mainTable').DataTable();
+        $('#mainTable').DataTable(
+            {
+                "pageLength": 25
+            }
+        );
         $('#student_birth_date').datetimepicker(
             {
                 viewMode: 'years',
