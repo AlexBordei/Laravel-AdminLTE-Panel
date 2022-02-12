@@ -24,6 +24,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- daterange picker -->
     <link rel="stylesheet" href="{{ asset("plugins/daterangepicker/daterangepicker.css") }}">
     <link rel="stylesheet" href="{{ asset("style.css") }}">
+    @yield('header')
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -201,5 +202,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
         );
     } );
 </script>
+@yield('footer')
 </body>
 </html>

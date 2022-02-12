@@ -137,6 +137,13 @@ class MenuOptionSeeder extends Seeder
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
 
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'Calendar';
+            $menuOption->url = '/calendar';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
+
             $parentMenuOption = new MenuOptions();
             $parentMenuOption->title = 'Subscriptions';
             $parentMenuOption->url = '/subscription';

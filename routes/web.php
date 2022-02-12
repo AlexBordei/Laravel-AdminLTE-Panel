@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AppController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InstrumentController;
 use App\Http\Controllers\PaymentController;
@@ -38,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/subscription', SubscriptionController::class);
     Route::resource('/subscription_type', SubscriptionTypeController::class);
     Route::resource('/payment', PaymentController::class);
+    Route::resource('/calendar', CalendarController::class);
     Route::resource('/sms', SmsController::class);
     Route::post('/sms/resend/{sms}', [SmsController::class, 'resend']);
 });
