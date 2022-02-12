@@ -207,6 +207,13 @@ class MenuOptionSeeder extends Seeder
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
 
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'SMS Templates';
+            $menuOption->url = '/sms_template';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
+
         }
     }
 }

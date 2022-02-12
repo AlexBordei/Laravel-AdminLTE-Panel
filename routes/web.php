@@ -7,6 +7,7 @@ use App\Http\Controllers\InstrumentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SmsController;
+use App\Http\Controllers\SmsTemplateController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SubscriptionTypeController;
@@ -41,6 +42,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/payment', PaymentController::class);
     Route::resource('/calendar', CalendarController::class);
     Route::resource('/sms', SmsController::class);
+    Route::resource('/sms_template', SmsTemplateController::class);
     Route::post('/sms/resend/{sms}', [SmsController::class, 'resend']);
 });
 
