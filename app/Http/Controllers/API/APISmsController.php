@@ -11,6 +11,11 @@ use Illuminate\Http\Response;
 
 class APISmsController extends Controller
 {
+    public function index() {
+      $messages = Sms::where('status', 'pending')->get();
+
+      return new Response($messages, 200);
+    }
     /**
      * Update the specified resource in storage.
      *

@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Instrument;
-use App\Models\Room;
 use App\Models\Service;
 use App\Models\Sms;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use PhpMqtt\Client\ConnectionSettings;
-use PhpMqtt\Client\MqttClient;
 
 class SmsController extends Controller
 {
@@ -25,13 +21,12 @@ class SmsController extends Controller
         $sms_service = Service::where('name', 'sms_service')->first();
         if(!empty($sms_service)) {
             $actual_date = Carbon::now();
-            $actual_date = $actual_date->subMinutes(1);
+            $actual_date = $actual_date->subSeconds(20);
 
             $sms->sms_service_status = "Bad. Service is not responding";
             if($sms_service->last_seen > $actual_date) {
                 $sms->sms_service_status = "All good. Service is up";
             }
-
         }
 
         return $this->buildResponse('sms.list', $sms);
@@ -66,75 +61,12 @@ class SmsController extends Controller
             'message' => $request->message,
             'status' => 'pending'
         ]);
-        // TODO: clear this in a more optimal class
-        $server   = 'broker.hivemq.com';
-        $port     = 1883;
-        $clientId = rand(5, 15);
-        $clean_session = false;
-
-        $connectionSettings  = new ConnectionSettings();
-        $connectionSettings
-            ->setKeepAliveInterval(60)
-            ->setLastWillQualityOfService(1);
-
-        $phone_number = $request->to;
-        $message = $request->message;
-
-        $mqtt = new MqttClient($server, $port, $clientId);
-
-        $mqtt->connect($connectionSettings, $clean_session);
-
-        $mqtt->publish(
-        // topic
-            env('SMS_SEND_TOPIC', '/panel/sms'),
-            // payload
-            $sms->id . '#' . $phone_number . '#' . $message,
-            // qos
-            0,
-            // retain
-            true
-        );
-        sleep(1);
-
-        $mqtt->disconnect();
 
         return redirect('/sms')->with('success', 'SMS request has been posted successfully!');
     }
 
     public function resend(Sms $sms)
     {
-        // TODO: clear this in a more optimal class
-        $server   = 'broker.hivemq.com';
-        $port     = 1883;
-        $clientId = rand(5, 15);
-        $clean_session = false;
-
-        $connectionSettings  = new ConnectionSettings();
-        $connectionSettings
-            ->setKeepAliveInterval(60)
-            ->setLastWillQualityOfService(1);
-
-        $phone_number = $sms->to;
-        $message = $sms->message;
-
-        $mqtt = new MqttClient($server, $port, $clientId);
-
-        $mqtt->connect($connectionSettings, $clean_session);
-
-        $mqtt->publish(
-        // topic
-            env('SMS_SEND_TOPIC', '/panel/sms'),
-            // payload
-            $sms->id . '#' . $phone_number . '#' . $message,
-            // qos
-            0,
-            // retain
-            true
-        );
-        sleep(1);
-
-        $mqtt->disconnect();
-
         $sms->update(['status' => 'pending', 'error' => '']);
 
         return back()->with('success', 'SMS request has been posted successfully!');
