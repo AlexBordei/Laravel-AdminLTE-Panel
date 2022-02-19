@@ -3,293 +3,248 @@
 @section('title', 'Calendar')
 
 @section('header')
-    <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.css"/>
-
-    <!-- If you use the default popups, use this. -->
-    <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.css"/>
-    <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.css"/>
+    <!-- fullCalendar -->
+    <link rel="stylesheet" href="{{ asset("plugins/fullcalendar/main.css") }}">
 @endsection
 
 @section('footer')
-    <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.2/tui-code-snippet.min.js"></script>
-    <script src="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.min.js"></script>
-    <script src="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.min.js"></script>
-    <script src="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.js"></script>
+    <!-- fullCalendar 2.2.5 -->
+    <!-- jQuery UI -->
+    <script src="{{ asset('plugins/jquery-ui/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('plugins/fullcalendar/main.js') }}"></script>
+    <!-- Page specific script -->
     <script>
-        var calendar = new tui.Calendar(document.getElementById('calendar'), {
-            defaultView: 'week',
-            taskView: false,    // Can be also ['milestone', 'task']
-            scheduleView: true,  // Can be also ['allday', 'time']
-            template: {
-                milestone: function (schedule) {
-                    return '<span class="calendar-font-icon ic-milestone-b"></span> <span style="background-color: ' + schedule.bgColor + '">' + schedule.title + '</span>'
-                },
-                milestoneTitle: function () {
-                    return '<span class="tui-full-calendar-left-content">MILESTONE</span>'
-                },
-                task: function (schedule) {
-                    return '#' + schedule.title
-                },
-                taskTitle: function () {
-                    return '<span class="tui-full-calendar-left-content">TASK</span>'
-                },
-                allday: function (schedule) {
-                    return getTimeTemplate(schedule, true)
-                },
-                alldayTitle: function () {
-                    return '<span class="tui-full-calendar-left-content">ALL DAY</span>'
-                },
-                time: function (schedule) {
-                    return '<strong>' + moment(schedule.start.getTime()).format('HH:mm') + '</strong> ' + schedule.title
-                },
-                goingDuration: function (schedule) {
-                    return '<span class="calendar-icon ic-travel-time"></span>' + schedule.goingDuration + 'min.'
-                },
-                comingDuration: function (schedule) {
-                    return '<span class="calendar-icon ic-travel-time"></span>' + schedule.comingDuration + 'min.'
-                },
-                monthMoreTitleDate: function (date, dayname) {
-                    var day = date.split('.')[2]
+        $(function () {
 
-                    return '<span class="tui-full-calendar-month-more-title-day">' + day + '</span> <span class="tui-full-calendar-month-more-title-day-label">' + dayname + '</span>'
-                },
-                monthMoreClose: function () {
-                    return '<span class="tui-full-calendar-icon tui-full-calendar-ic-close"></span>'
-                },
-                monthGridHeader: function (dayModel) {
-                    var date = parseInt(dayModel.date.split('-')[2], 10)
-                    var classNames = ['tui-full-calendar-weekday-grid-date ']
+            /* initialize the external events
+             -----------------------------------------------------------------*/
+            function ini_events(ele) {
+                ele.each(function () {
 
-                    if (dayModel.isToday) {
-                        classNames.push('tui-full-calendar-weekday-grid-date-decorator')
+                    // create an Event Object (https://fullcalendar.io/docs/event-object)
+                    // it doesn't need to have a start or end
+                    var eventObject = {
+                        title: $.trim($(this).text()) // use the element's text as the event title
                     }
 
-                    return '<span class="' + classNames.join(' ') + '">' + date + '</span>'
-                },
-                monthGridHeaderExceed: function (hiddenSchedules) {
-                    return '<span class="weekday-grid-more-schedules">+' + hiddenSchedules + '</span>'
-                },
-                monthGridFooter: function () {
-                    return ''
-                },
-                monthGridFooterExceed: function (hiddenSchedules) {
-                    return ''
-                },
-                monthDayname: function (model) {
-                    return (model.label).toString().toLocaleUpperCase()
-                },
-                weekDayname: function (model) {
-                    return '<span class="tui-full-calendar-dayname-date">' + model.date + '</span>&nbsp;&nbsp;<span class="tui-full-calendar-dayname-name">' + model.dayName + '</span>'
-                },
-                weekGridFooterExceed: function (hiddenSchedules) {
-                    return '+' + hiddenSchedules
-                },
-                dayGridTitle: function (viewName) {
+                    // store the Event Object in the DOM element so we can get to it later
+                    $(this).data('eventObject', eventObject)
 
-                    // use another functions instead of 'dayGridTitle'
-                    // milestoneTitle: function() {...}
-                    // taskTitle: function() {...}
-                    // alldayTitle: function() {...}
+                    // make the event draggable using jQuery UI
+                    $(this).draggable({
+                        zIndex        : 1070,
+                        revert        : true, // will cause the event to go back to its
+                        revertDuration: 0  //  original position after the drag
+                    })
 
-                    var title = ''
-                    switch (viewName) {
-                        case 'milestone':
-                            title = '<span class="tui-full-calendar-left-content">MILESTONE</span>'
-                            break
-                        case 'task':
-                            title = '<span class="tui-full-calendar-left-content">TASK</span>'
-                            break
-                        case 'allday':
-                            title = '<span class="tui-full-calendar-left-content">ALL DAY</span>'
-                            break
-                    }
+                })
+            }
 
-                    return title
-                },
-                schedule: function (schedule) {
+            ini_events($('#external-events div.external-event'))
 
-                    // use another functions instead of 'schedule'
-                    // milestone: function() {...}
-                    // task: function() {...}
-                    // allday: function() {...}
+            /* initialize the calendar
+             -----------------------------------------------------------------*/
+            //Date for the calendar events (dummy data)
+            var date = new Date()
+            var d    = date.getDate(),
+                m    = date.getMonth(),
+                y    = date.getFullYear()
 
-                    var tpl
+            var Calendar = FullCalendar.Calendar;
+            var Draggable = FullCalendar.Draggable;
 
-                    switch (category) {
-                        case 'milestone':
-                            tpl = '<span class="calendar-font-icon ic-milestone-b"></span> <span style="background-color: ' + schedule.bgColor + '">' + schedule.title + '</span>'
-                            break
-                        case 'task':
-                            tpl = '#' + schedule.title
-                            break
-                        case 'allday':
-                            tpl = getTimeTemplate(schedule, true)
-                            break
-                    }
+            var containerEl = document.getElementById('external-events');
+            var calendarEl = document.getElementById('calendar');
 
-                    return tpl
-                },
-                collapseBtnTitle: function () {
-                    return '<span class="tui-full-calendar-icon tui-full-calendar-ic-arrow-solid-top"></span>'
-                },
-                timezoneDisplayLabel: function (timezoneOffset, displayLabel) {
-                    var gmt, hour, minutes
+            // initialize the external events
+            // -----------------------------------------------------------------
 
-                    if (!displayLabel) {
-                        gmt = timezoneOffset < 0 ? '-' : '+'
-                        hour = Math.abs(parseInt(timezoneOffset / 60, 10))
-                        minutes = Math.abs(timezoneOffset % 60)
-                        displayLabel = gmt + getPadStart(hour) + ':' + getPadStart(minutes)
-                    }
-
-                    return displayLabel
-                },
-                timegridDisplayPrimayTime: function (time) {
-                    // will be deprecated. use 'timegridDisplayPrimaryTime'
-                    var meridiem = 'am'
-                    var hour = time.hour
-
-                    if (time.hour > 12) {
-                        meridiem = 'pm'
-                        hour = time.hour - 12
-                    }
-
-                    return hour + ' ' + meridiem
-                },
-                timegridDisplayPrimaryTime: function (time) {
-                    var meridiem = 'am'
-                    var hour = time.hour
-
-                    if (time.hour > 12) {
-                        meridiem = 'pm'
-                        hour = time.hour - 12
-                    }
-
-                    return hour + ' ' + meridiem
-                },
-                timegridDisplayTime: function (time) {
-                    return getPadStart(time.hour) + ':' + getPadStart(time.hour)
-                },
-                timegridCurrentTime: function (timezone) {
-                    var templates = []
-
-                    if (timezone.dateDifference) {
-                        templates.push('[' + timezone.dateDifferenceSign + timezone.dateDifference + ']<br>')
-                    }
-
-                    templates.push(moment(timezone.hourmarker).format('HH:mm a'))
-
-                    return templates.join('')
-                },
-                popupIsAllDay: function () {
-                    return 'All Day'
-                },
-                popupStateFree: function () {
-                    return 'Free'
-                },
-                popupStateBusy: function () {
-                    return 'Busy'
-                },
-                titlePlaceholder: function () {
-                    return 'Subject'
-                },
-                locationPlaceholder: function () {
-                    return 'Location'
-                },
-                startDatePlaceholder: function () {
-                    return 'Start date'
-                },
-                endDatePlaceholder: function () {
-                    return 'End date'
-                },
-                popupSave: function () {
-                    return 'Save'
-                },
-                popupUpdate: function () {
-                    return 'Update'
-                },
-                popupDetailDate: function (isAllDay, start, end) {
-                    var isSameDate = moment(start).isSame(end)
-                    var endFormat = (isSameDate ? '' : 'YYYY.MM.DD ') + 'hh:mm a'
-
-                    if (isAllDay) {
-                        return moment(start).format('YYYY.MM.DD') + (isSameDate ? '' : ' - ' + moment(end).format('YYYY.MM.DD'))
-                    }
-
-                    return (moment(start).format('YYYY.MM.DD hh:mm a') + ' - ' + moment(end).format(endFormat))
-                },
-                popupDetailLocation: function (schedule) {
-                    return 'Location : ' + schedule.location
-                },
-                popupDetailUser: function (schedule) {
-                    return 'User : ' + (schedule.attendees || []).join(', ')
-                },
-                popupDetailState: function (schedule) {
-                    return 'State : ' + schedule.state || 'Busy'
-                },
-                popupDetailRepeat: function (schedule) {
-                    return 'Repeat : ' + schedule.recurrenceRule
-                },
-                popupDetailBody: function (schedule) {
-                    return 'Body : ' + schedule.body
-                },
-                popupEdit: function () {
-                    return 'Edit'
-                },
-                popupDelete: function () {
-                    return 'Delete'
+            new Draggable(containerEl, {
+                itemSelector: '.external-event',
+                eventData: function(eventEl) {
+                    return {
+                        title: eventEl.innerText,
+                        backgroundColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
+                        borderColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
+                        textColor: window.getComputedStyle( eventEl ,null).getPropertyValue('color'),
+                    };
                 }
-            },
-            month: {
-                daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-                startDayOfWeek: 1,
-                narrowWeekend: true
-            },
-            week: {
-                daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-                startDayOfWeek: 1,
-                narrowWeekend: true,
-                hourStart: 10,
-                hourEnd: 21
-            }
-        });
-        calendar.createSchedules([
-            {
-                id: '1',
-                calendarId: '1',
-                title: 'my schedule',
-                category: 'time',
-                dueDateClass: '',
-                start: '2022-02-18T22:30:00+09:00',
-                end: '2022-02-19T02:30:00+09:00'
-            },
-            {
-                id: '2',
-                calendarId: '1',
-                title: 'second schedule',
-                category: 'time',
-                dueDateClass: '',
-                start: '2022-02-18T17:30:00+09:00',
-                end: '2022-02-19T17:31:00+09:00'
-            }
-        ]);
+            });
+
+            var calendar = new Calendar(calendarEl, {
+                headerToolbar: {
+                    left  : 'prev,next today',
+                    center: 'title',
+                    right : 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                themeSystem: 'bootstrap',
+                //Random default events
+                events: [
+                    {
+                        title          : 'All Day Event',
+                        start          : new Date(y, m, 1),
+                        backgroundColor: '#f56954', //red
+                        borderColor    : '#f56954', //red
+                        allDay         : true
+                    },
+                    {
+                        title          : 'Long Event',
+                        start          : new Date(y, m, d - 5),
+                        end            : new Date(y, m, d - 2),
+                        backgroundColor: '#f39c12', //yellow
+                        borderColor    : '#f39c12' //yellow
+                    },
+                    {
+                        title          : 'Meeting',
+                        start          : new Date(y, m, d, 10, 30),
+                        allDay         : false,
+                        backgroundColor: '#0073b7', //Blue
+                        borderColor    : '#0073b7' //Blue
+                    },
+                    {
+                        title          : 'Lunch',
+                        start          : new Date(y, m, d, 12, 0),
+                        end            : new Date(y, m, d, 14, 0),
+                        allDay         : false,
+                        backgroundColor: '#00c0ef', //Info (aqua)
+                        borderColor    : '#00c0ef' //Info (aqua)
+                    },
+                    {
+                        title          : 'Birthday Party',
+                        start          : new Date(y, m, d + 1, 19, 0),
+                        end            : new Date(y, m, d + 1, 22, 30),
+                        allDay         : false,
+                        backgroundColor: '#00a65a', //Success (green)
+                        borderColor    : '#00a65a' //Success (green)
+                    },
+                    {
+                        title          : 'Click for Google',
+                        start          : new Date(y, m, 28),
+                        end            : new Date(y, m, 29),
+                        url            : 'https://www.google.com/',
+                        backgroundColor: '#3c8dbc', //Primary (light-blue)
+                        borderColor    : '#3c8dbc' //Primary (light-blue)
+                    }
+                ],
+                editable  : false,
+                droppable : true, // this allows things to be dropped onto the calendar !!!
+                drop      : function(info) {
+                        info.draggedEl.parentNode.removeChild(info.draggedEl);
+                }
+            });
+
+            calendar.render();
+            // $('#calendar').fullCalendar()
+
+            /* ADDING EVENTS */
+            var currColor = '#3c8dbc' //Red by default
+            // Color chooser button
+            $('#color-chooser > li > a').click(function (e) {
+                e.preventDefault()
+                // Save color
+                currColor = $(this).css('color')
+                // Add color effect to button
+                $('#add-new-event').css({
+                    'background-color': currColor,
+                    'border-color'    : currColor
+                })
+            })
+            $('#add-new-event').click(function (e) {
+                e.preventDefault()
+                // Get value and make sure it is not null
+                var val = $('#new-event').val()
+                if (val.length == 0) {
+                    return
+                }
+
+                // Create events
+                var event = $('<div />')
+                event.css({
+                    'background-color': currColor,
+                    'border-color'    : currColor,
+                    'color'           : '#fff'
+                }).addClass('external-event')
+                event.text(val)
+                $('#external-events').prepend(event)
+
+                // Add draggable funtionality
+                ini_events(event)
+
+                // Remove event from text input
+                $('#new-event').val('')
+            })
+        })
     </script>
 @endsection
 
 @section('content')
-    <div id="menu">
-    <span id="menu-navi">
-        <button type="button" class="btn btn-default btn-sm move-today" data-action="move-today">Today</button>
-        <button type="button" class="btn btn-default btn-sm move-day" data-action="move-prev">
-          <i class="calendar-icon ic-arrow-line-left" data-action="move-prev"></i>
-        </button>
-        <button type="button" class="btn btn-default btn-sm move-day" data-action="move-next">
-          <i class="calendar-icon ic-arrow-line-right" data-action="move-next"></i>
-        </button>
-      </span>
-        <span id="renderRange" class="render-range"></span>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="sticky-top mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Events to be scheduled</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- the events -->
+                        <div id="external-events">
+                            @if(count($data['events']) > 0)
+                                @foreach($data['events'] as $event)
+                                    <div class="external-event bg-info">
+                                        {{$event->subscription->id}} -
+                                        Student: {{$event->subscription->student->first_name}} {{$event->subscription->student->last_name}}<br>
+                                        Teacher: {{$event->subscription->teacher->first_name}} {{$event->subscription->teacher->last_name}}<br>
+                                        Instrument: {{$event->subscription->instrument->name}}<br>
+                                        Room: {{$event->subscription->room->name}}
+                                    </div>
+                                @endforeach
+                                @else
+                                    There are no events to be scheduled
+                            @endif
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Create Event</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="btn-group" style="width: 100%; margin-bottom: 10px;">
+                            <ul class="fc-color-picker" id="color-chooser">
+                                <li><a class="text-primary" href="#"><i class="fas fa-square"></i></a></li>
+                                <li><a class="text-warning" href="#"><i class="fas fa-square"></i></a></li>
+                                <li><a class="text-success" href="#"><i class="fas fa-square"></i></a></li>
+                                <li><a class="text-danger" href="#"><i class="fas fa-square"></i></a></li>
+                                <li><a class="text-muted" href="#"><i class="fas fa-square"></i></a></li>
+                            </ul>
+                        </div>
+                        <!-- /btn-group -->
+                        <div class="input-group">
+                            <input id="new-event" type="text" class="form-control" placeholder="Event Title">
+
+                            <div class="input-group-append">
+                                <button id="add-new-event" type="button" class="btn btn-primary">Add</button>
+                            </div>
+                            <!-- /btn-group -->
+                        </div>
+                        <!-- /input-group -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.col -->
+        <div class="col-md-9">
+            <div class="card card-primary">
+                <div class="card-body p-0">
+                    <!-- THE CALENDAR -->
+                    <div id="calendar"></div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
     </div>
-
-    <div id="calendar"></div>
-
 @endsection

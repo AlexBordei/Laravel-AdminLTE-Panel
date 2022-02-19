@@ -16,9 +16,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Student</th>
-                            <th>Teacher</th>
-                            <th>Instrument</th>
-                            <th>Room</th>
+                            <th>Subscription ID</th>
                             <th>Starting</th>
                             <th>Ending</th>
                             <th>Status</th>
@@ -29,12 +27,10 @@
                         @foreach( $data as $elem )
                         <tr>
                             <td>{{ $elem->id }}</td>
-                            <td><a href="{{ url('/student/' . $elem->student->id) }}">{{ $elem->student->first_name }} {{ $elem->student->last_name }}</a></td>
-                            <td><a href="{{ url('/teacher/' . $elem->teacher->id) }}">{{ $elem->teacher->first_name }} {{ $elem->teacher->last_name }}</a></td>
-                            <td><a href="{{ url('/instrument/' . $elem->instrument->id) }}">{{ $elem->instrument->name }}</a></td>
-                            <td><a href="{{ url('/room/' . $elem->room->id) }}">{{ $elem->room->name }}</a></td>
-                            <td>{{ $elem->starting->format('d-m-Y H:i') }}</td>
-                            <td>{{ $elem->ending->format('d-m-Y H:i') }}</td>
+                            <td>{{ $elem->student->first_name }} {{ $elem->student->last_name }}</td>
+                            <td><a href="{{ url('/subscription/' . $elem->subscription->id) }}">{{ $elem->subscription->id }}</a></td>
+                            <td>{{ !empty($elem->starting) ? $elem->starting->format('d-m-Y H:i') : ''}}</td>
+                            <td>{{ !empty($elem->ending) ? $elem->starting->format('d-m-Y H:i') : ''}}</td>
                             <td>{{ ucfirst($elem->status) }}</td>
                             <td>
                                 <a href="{{ url('/event/' . $elem->id . '/edit') }}"><button class="btn btn-secondary btn-flat">Edit</button></a>

@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePaymentRequest;
 use App\Http\Requests\UpdatePaymentRequest;
+use App\Models\Event;
 use App\Models\Payment;
 use App\Models\Subscription;
+use App\Models\SubscriptionType;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 
 class PaymentController extends Controller
@@ -59,6 +62,13 @@ class PaymentController extends Controller
                 $subscription->payment_id = $payment->id;
                 if($payment->status === 'paid' && isset($request->activate_subscription)) {
                     $subscription->status = 'active';
+                    $subscription_type = SubscriptionType::where('id', $subscription->subscription_type_id)->first();
+
+                    for($i = 1; $i <= (int)$subscription_type->sessions_number; $i++) {
+                        $event = new Event();
+                        $event->subscription_id = $subscription->id;
+                        $event->save();
+                    }
                 }
                 $subscription->save();
             }
@@ -95,6 +105,13 @@ class PaymentController extends Controller
             $subscription->payment_id = $payment->id;
             if($payment->status === 'paid' && isset($request->activate_subscription)) {
                 $subscription->status = 'active';
+                $subscription_type = SubscriptionType::where('id', $subscription->subscription_type_id)->first();
+
+                for($i = 1; $i <= (int)$subscription_type->sessions_number; $i++) {
+                    $event = new Event();
+                    $event->subscription_id = $subscription->id;
+                    $event->save();
+                }
             }
             $subscription->save();
         }

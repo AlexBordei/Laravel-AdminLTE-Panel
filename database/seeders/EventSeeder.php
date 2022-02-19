@@ -16,10 +16,7 @@ class EventSeeder extends Seeder
     {
         $event = new Event();
 
-        $event->student_id = 1;
-        $event->teacher_id = 2;
-        $event->instrument_id = 3;
-        $event->room_id = 4;
+        $event->subscription_id = 1;
         $event->starting = new \DateTime();
         $event->ending =  new \DateTime();
 

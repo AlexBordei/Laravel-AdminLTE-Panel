@@ -16,46 +16,22 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Student</label>
-                                    <select class="form-control" name="student_id" id="students-list">
-                                        <option value="">Select student...</option>
-                                        @foreach($data['students'] as $student)
-                                            <option {{$data['event']['student']->id === $student->id ? 'selected="selected' : ''}} value="{{ $student->id }}">{{ $student->first_name }} {{ $student->last_name }}</option>
+                                    <label>Subscription</label>
+                                    <select class="form-control" name="subscription_id" id="subscriptions-list">
+                                        <option value="">Select subscription...</option>
+                                        @foreach($data['subscriptions'] as $subscription)
+                                            <option {{$data['event']['subscription']->id === $subscription->id ? 'selected="selected' : ''}} value="{{ $subscription->id }}">{{ $subscription->id }} - {{ $subscription->student->first_name }} {{ $subscription->student->last_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
+
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Teacher</label>
-                                    <select class="form-control" name="teacher_id" id="teachers-list">
-                                        <option value="">Select teacher...</option>
-                                        @foreach($data['teachers'] as $teacher)
-                                            <option {{$data['event']['teacher']->id === $teacher->id ? 'selected="selected' : ''}} value="{{ $teacher->id }}">{{ $teacher->first_name }} {{ $teacher->last_name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Instrument</label>
-                                    <select class="form-control" name="instrument_id"  id="instruments-list">
-                                        <option value="">Select instrument...</option>
-                                        @foreach($data['instruments'] as $instrument)
-                                            <option {{$data['event']['instrument']->id === $instrument->id ? 'selected="selected' : ''}} value="{{ $instrument->id }}">{{ $instrument->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Room</label>
-                                    <select class="form-control" name="room_id"  id="rooms-list">
-                                        <option value="">Select room...</option>
-                                        @foreach($data['rooms'] as $room)
-                                            <option {{$data['event']['room']->id === $room->id ? 'selected="selected' : ''}} value="{{ $room->id }}">{{ $room->name }}</option>
+                                    <label>Status</label>
+                                    <select class="form-control" name="status">
+                                        @foreach($data['statuses'] as $status)
+                                            <option {{$data['event']->status === $status ? 'selected="selected' : ''}} value="{{ $status }}">{{ ucfirst($status) }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -77,16 +53,6 @@
                                 </div>
                                 <!-- /.form group -->
 
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Status</label>
-                                    <select class="form-control" name="status">
-                                        @foreach($data['statuses'] as $status)
-                                            <option {{$data['event']->status === $status ? 'selected="selected' : ''}} value="{{ $status }}">{{ ucfirst($status) }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
                             </div>
                         </div>
 

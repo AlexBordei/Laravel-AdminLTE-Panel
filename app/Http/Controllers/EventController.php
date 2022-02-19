@@ -8,6 +8,7 @@ use App\Models\Event;
 use App\Models\Instrument;
 use App\Models\Room;
 use App\Models\Student;
+use App\Models\Subscription;
 use App\Models\Teacher;
 use Carbon\Carbon;
 use Google\Service\Exception;
@@ -22,11 +23,13 @@ class EventController extends Controller
     public function index()
     {
         $events = Event::with([
-            'teacher',
-            'student',
-            'instrument',
-            'room'
+            'subscription',
         ])->get();
+
+        foreach ($events as $key => $event) {
+            $student = Student::where('id', $event->subscription->student_id)->first(['first_name', 'last_name']);
+            $events[$key]->student = $student;
+        }
         return $this->buildResponse('event.list', $events);
     }
 
@@ -37,21 +40,19 @@ class EventController extends Controller
      */
     public function create()
     {
-        $students = Student::all(['id', 'first_name', 'last_name']);
-        $teachers = Teacher::all(['id', 'first_name', 'last_name']);
-        $instruments = Instrument::all(['id', 'name']);
-        $rooms = Room::all(['id', 'name']);
+        $subscriptions = Subscription::with([
+            'student',
+        ])->get();
+
         $statuses = [
-            'new',
+            'pending',
+            'scheduled',
             'confirmed',
             'canceled'
         ];
 
         return $this->buildResponse('event.create', [
-            'students' => $students,
-            'teachers' => $teachers,
-            'instruments' => $instruments,
-            'rooms' => $rooms,
+            'subscriptions' => $subscriptions,
             'statuses' => $statuses,
         ]);
     }
@@ -65,12 +66,9 @@ class EventController extends Controller
     public function store(StoreEventRequest $request)
     {
         $validated = $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'teacher_id' => 'required|exists:teachers,id',
-            'room_id' => 'required|exists:rooms,id',
-            'instrument_id' => 'required|exists:instruments,id',
+            'subscription_id' => 'required|exists:subscriptions,id',
             'time_interval' => 'required|max:255',
-            'status' => 'required|in:new,confirmed,canceled',
+            'status' => 'required|in:pending,scheduled,confirmed,canceled',
         ]);
 
         $starting = explode(' - ', $request->get('time_interval'))[0];
@@ -82,10 +80,7 @@ class EventController extends Controller
         $g_event_response = $this->create_google_event($request);
         Event::create(
             [
-                'student_id' => $request->get('student_id'),
-                'teacher_id' => $request->get('teacher_id'),
-                'room_id' => $request->get('room_id'),
-                'instrument_id' => $request->get('instrument_id'),
+                'subscription_id' => $request->get('subscription_id'),
                 'starting' => $starting_date,
                 'ending' => $ending_date,
                 'status' => $request->get('status'),
@@ -114,27 +109,20 @@ class EventController extends Controller
      */
     public function edit(Event $event)
     {
-        $students = Student::all(['id', 'first_name', 'last_name']);
-        $teachers = Teacher::all(['id', 'first_name', 'last_name']);
-        $instruments = Instrument::all(['id', 'name']);
-        $rooms = Room::all(['id', 'name']);
+        $subscriptions = Subscription::with('student')->get();
+
         $statuses = [
-            'new',
+            'pending',
+            'scheduled',
             'confirmed',
             'canceled'
         ];
         $event = Event::with([
-            'teacher',
-            'student',
-            'instrument',
-            'room'
+            'subscription',
         ])->where('id', $event->id)->first();
 
         return $this->buildResponse('event.edit', [
-            'students' => $students,
-            'teachers' => $teachers,
-            'instruments' => $instruments,
-            'rooms' => $rooms,
+            'subscriptions' => $subscriptions,
             'statuses' => $statuses,
             'event' => $event
         ]);
@@ -151,12 +139,9 @@ class EventController extends Controller
     {
 
         $validated = $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'teacher_id' => 'required|exists:teachers,id',
-            'room_id' => 'required|exists:rooms,id',
-            'instrument_id' => 'required|exists:instruments,id',
+            'subscription_id' => 'required|exists:subscriptions,id',
             'time_interval' => 'required|max:255',
-            'status' => 'required|in:new,confirmed,canceled',
+            'status' => 'required|in:pending,scheduled,confirmed,canceled',
         ]);
 
         $starting = explode(' - ', $request->get('time_interval'))[0];
@@ -168,10 +153,7 @@ class EventController extends Controller
         $g_event_response = $this->update_google_event($request, $event);
 
         $event->fill([
-            'student_id' => $request->get('student_id'),
-            'teacher_id' => $request->get('teacher_id'),
-            'room_id' => $request->get('room_id'),
-            'instrument_id' => $request->get('instrument_id'),
+            'subscription_id' => $request->get('subscription_id'),
             'starting' => $starting_date,
             'ending' => $ending_date,
             'status' => $request->get('status'),
@@ -190,7 +172,9 @@ class EventController extends Controller
     public function destroy(Event $event)
     {
         try {
-            $this->delete_google_event($event);
+            if(!empty($event->google_event_id) ) {
+                $this->delete_google_event($event);
+            }
 
             $event->deleteOrFail();
             return redirect()
@@ -211,18 +195,21 @@ class EventController extends Controller
         $starting_date = \DateTime::createFromFormat('d-m-Y H:i', $starting);
         $ending_date = \DateTime::createFromFormat('d-m-Y H:i', $ending);
 
-
-        $instrument = Instrument::where('id', $request->get('instrument_id'))->first();
-        $student = Student::where('id', $request->get('student_id'))->first();
-        $room = Room::where('id', $request->get('room_id'))->first();
-        $teacher = Teacher::where('id', $request->get('teacher_id'))->first();
+        $subscription = Subscription::where('id', $request->get('subscription_id'))->with(
+            [
+                'student',
+                'teacher',
+                'instrument',
+                'room',
+        ]
+        )->first();
 
         $g_event = [];
 
-        $g_event['name'] = $instrument->name . ' ' . $student->first_name . ' ' . $student->last_name;
-        $g_event['description']  = "Student: " . ' ' . $student->first_name . ' ' . $student->last_name . "\n";
-        $g_event['description']  .= "Room: " . ' ' . $room->name . "\n";
-        $g_event['description']  .= "Instrument: " . ' ' . $instrument->name . "\n";
+        $g_event['name'] = $subscription->instrument->name . ' ' . $subscription->student->first_name . ' ' . $subscription->student->last_name;
+        $g_event['description']  = "Student: " . ' ' . $subscription->student->first_name . ' ' . $subscription->student->last_name . "\n";
+        $g_event['description']  .= "Room: " . ' ' . $subscription->room->name . "\n";
+        $g_event['description']  .= "Instrument: " . ' ' . $subscription->instrument->name . "\n";
         $g_event['description']  .= "Status: " . ' ' . $request->get('status') . "\n";
         $g_event['startDateTime']  = Carbon::create($starting_date);
         $g_event['endDateTime']  = Carbon::create($ending_date);
@@ -230,9 +217,9 @@ class EventController extends Controller
         $g_event_response = null;
 
         try {
-            if (!empty($teacher->google_calendar_id)) {
+            if (!empty($subscription->teacher->google_calendar_id)) {
                 try {
-                    $g_event_response = \Spatie\GoogleCalendar\Event::create($g_event, $teacher->google_calendar_id);
+                    $g_event_response = \Spatie\GoogleCalendar\Event::create($g_event, $subscription->teacher->google_calendar_id);
                 } catch (Exception $e) {
                     $g_event_response = \Spatie\GoogleCalendar\Event::create($g_event);
                 }
@@ -250,12 +237,12 @@ class EventController extends Controller
     private function delete_google_event($event) {
         if(!empty($event->get('google_event_id'))) {
             try {
-                $teacher = Teacher::where('id', $event->teacher_id)->first();
+                $subscription = Subscription::where('id', $event->subscription_id)->with('teacher')->first();
 
                 $g_event = null;
-                if (!empty($teacher->google_calendar_id)) {
+                if (!empty($subscription->teacher->google_calendar_id)) {
                     try {
-                        $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id, $teacher->google_calendar_id);
+                        $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id, $subscription->teacher->google_calendar_id);
                     } catch (Exception $e) {
                         $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id);
                     }
@@ -273,12 +260,11 @@ class EventController extends Controller
     private function update_google_event($request, $event) {
         if(!empty($event->get('google_event_id'))) {
             try {
-                $teacher = Teacher::where('id', $event->teacher_id)->first();
-
+                $subscription = Subscription::where('id', $event->subscription_id)->with('teacher')->first();
                 $g_event = null;
-                if (!empty($teacher->google_calendar_id)) {
+                if (!empty($subscription->teacher->google_calendar_id)) {
                     try {
-                        $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id, $teacher->google_calendar_id);
+                        $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id, $subscription->teacher->google_calendar_id);
                     } catch (Exception $e) {
                         $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id);
                     }

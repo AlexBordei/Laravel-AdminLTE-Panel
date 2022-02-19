@@ -39,6 +39,41 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label>Teacher</label>
+                                    <select class="form-control" name="teacher_id" id="teachers-list">
+                                        <option value="">Select teacher...</option>
+                                        @foreach($data['teachers'] as $teacher)
+                                            <option value="{{ $teacher->id }}">{{ $teacher->first_name }} {{ $teacher->last_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Instrument</label>
+                                    <select class="form-control" name="instrument_id"  id="instruments-list">
+                                        <option value="">Select instrument...</option>
+                                        @foreach($data['instruments'] as $instrument)
+                                            <option value="{{ $instrument->id }}">{{ $instrument->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Room</label>
+                                    <select class="form-control" name="room_id"  id="rooms-list">
+                                        <option value="">Select room...</option>
+                                        @foreach($data['rooms'] as $room)
+                                            <option value="{{ $room->id }}">{{ $room->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label>Status</label>
                                     <select class="form-control" name="status">
                                         @foreach($data['statuses'] as $status)
@@ -47,6 +82,8 @@
                                     </select>
                                 </div>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="row">
                                         <div class="col-md-6">

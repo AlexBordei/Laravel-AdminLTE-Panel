@@ -15,22 +15,17 @@ class CreateEventsTable extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('student_id');
-            $table->unsignedBigInteger('teacher_id');
-            $table->unsignedBigInteger('instrument_id');
-            $table->unsignedBigInteger('room_id');
-            $table->dateTime('starting');
-            $table->dateTime('ending');
-            $table->enum('status', ['new', 'confirmed', 'canceled'])->default('new');
+            $table->unsignedBigInteger('subscription_id');
+            $table->dateTime('starting')->nullable();
+            $table->dateTime('ending')->nullable();
+            $table->enum('status', ['pending', 'scheduled', 'confirmed', 'canceled'])->default('pending');
             $table->string('google_event_id')->nullable();
             $table->timestamps();
         });
 
         Schema::table('events',function (Blueprint $table){
-            $table->foreign('student_id')->references('id')->on('students');
-            $table->foreign('teacher_id')->references('id')->on('teachers');
-            $table->foreign('instrument_id')->references('id')->on('instruments');
-            $table->foreign('room_id')->references('id')->on('rooms');
+            $table->foreign('subscription_id')->references('id')->on('subscriptions')->cascadeOnDelete();
+
         });
     }
 
