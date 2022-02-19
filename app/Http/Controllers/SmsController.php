@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use App\Models\Sms;
+use App\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -39,7 +40,8 @@ class SmsController extends Controller
      */
     public function create()
     {
-        return $this->buildResponse('sms.create');
+        $students = Student::all();
+        return $this->buildResponse('sms.create', array('students' => $students));
     }
 
     /**
@@ -51,13 +53,15 @@ class SmsController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'to' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
+            'student_id' => 'exists:students,id',
             'message' => 'required|max:255',
         ]);
 
+        $student = Student::where('id', $request->student_id)->first();
+
         $sms = Sms::create([
             'from' => env('SMS_FROM_NUMBER', ''),
-            'to' => $request->to,
+            'to' => $student->phone,
             'message' => $request->message,
             'status' => 'pending'
         ]);

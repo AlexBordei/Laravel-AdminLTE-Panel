@@ -14,10 +14,16 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
-                                {{--Phone number--}}
                                 <div class="form-group">
-                                    <label for="to">Phone number</label>
-                                    <input type="text" name="to" class="form-control" placeholder="Phone number">
+                                    <label>Student</label>
+                                    <select class="form-control" name="student_id" id="students-list">
+                                        <option value="">Select student...</option>
+                                        @isset($data['students'])
+                                            @foreach($data['students'] as $student)
+                                                <option value="{{ $student->id }}">{{ $student->first_name }} {{ $student->last_name }}</option>
+                                            @endforeach
+                                        @endisset
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-6">

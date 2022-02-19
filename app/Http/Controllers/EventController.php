@@ -11,9 +11,6 @@ use App\Models\Student;
 use App\Models\Teacher;
 use Carbon\Carbon;
 use Google\Service\Exception;
-use Illuminate\Http\Request;
-use Spatie\GoogleCalendar\Exceptions\InvalidConfiguration;
-use Spatie\GoogleCalendar\GoogleCalendar;
 
 class EventController extends Controller
 {
@@ -83,7 +80,6 @@ class EventController extends Controller
         $ending_date = \DateTime::createFromFormat('d-m-Y H:i', $ending);
 
         $g_event_response = $this->create_google_event($request);
-
         Event::create(
             [
                 'student_id' => $request->get('student_id'),
