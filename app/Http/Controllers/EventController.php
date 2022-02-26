@@ -11,6 +11,7 @@ use App\Models\Student;
 use App\Models\Subscription;
 use App\Models\Teacher;
 use Carbon\Carbon;
+use DateInterval;
 use Google\Service\Exception;
 
 class EventController extends Controller
@@ -137,27 +138,17 @@ class EventController extends Controller
      */
     public function update(UpdateEventRequest $request, Event $event)
     {
-
         $validated = $request->validate([
             'subscription_id' => 'required|exists:subscriptions,id',
-            'time_interval' => 'required|max:255',
             'status' => 'required|in:pending,scheduled,confirmed,canceled',
         ]);
 
-        $starting = explode(' - ', $request->get('time_interval'))[0];
-        $ending = explode(' - ', $request->get('time_interval'))[1];
-
-        $starting_date = \DateTime::createFromFormat('d-m-Y H:i', $starting);
-        $ending_date = \DateTime::createFromFormat('d-m-Y H:i', $ending);
-
-        $g_event_response = $this->update_google_event($request, $event);
+//        $g_event_response = $this->update_google_event($request, $event);
 
         $event->fill([
             'subscription_id' => $request->get('subscription_id'),
-            'starting' => $starting_date,
-            'ending' => $ending_date,
             'status' => $request->get('status'),
-            'google_event_id' => $g_event_response->id
+//            'google_event_id' => $g_event_response->id
         ])->save();
 
         return redirect()->route('event.index')->with('success', 'Event successfully updated!');
@@ -187,15 +178,9 @@ class EventController extends Controller
         }
     }
 
-    private function create_google_event($request) {
+    private function create_google_event($event) {
 
-        $starting = explode(' - ', $request->get('time_interval'))[0];
-        $ending = explode(' - ', $request->get('time_interval'))[1];
-
-        $starting_date = \DateTime::createFromFormat('d-m-Y H:i', $starting);
-        $ending_date = \DateTime::createFromFormat('d-m-Y H:i', $ending);
-
-        $subscription = Subscription::where('id', $request->get('subscription_id'))->with(
+        $subscription = Subscription::where('id', $event->subscription_id)->with(
             [
                 'student',
                 'teacher',
@@ -210,9 +195,9 @@ class EventController extends Controller
         $g_event['description']  = "Student: " . ' ' . $subscription->student->first_name . ' ' . $subscription->student->last_name . "\n";
         $g_event['description']  .= "Room: " . ' ' . $subscription->room->name . "\n";
         $g_event['description']  .= "Instrument: " . ' ' . $subscription->instrument->name . "\n";
-        $g_event['description']  .= "Status: " . ' ' . $request->get('status') . "\n";
-        $g_event['startDateTime']  = Carbon::create($starting_date);
-        $g_event['endDateTime']  = Carbon::create($ending_date);
+        $g_event['description']  .= "Status: " . ' ' . $event->status . "\n";
+        $g_event['startDateTime']  = Carbon::create($event->starting);
+        $g_event['endDateTime']  = Carbon::create($event->ending);
 
         $g_event_response = null;
 
@@ -278,5 +263,26 @@ class EventController extends Controller
             }
         }
         return false;
+    }
+
+    public function schedule(Event $event) {
+//        $this->validate([
+//            'starting' => 'required',
+//            'id' => 'required|exists:events,id'
+//        ]);
+
+        $starting_date = \DateTime::createFromFormat('d-m-Y H:i', $_POST['starting']);
+        $ending_date = \DateTime::createFromFormat('d-m-Y H:i', $_POST['starting']);
+        $ending_date->modify('+60 minutes');
+
+        $event->status = 'scheduled';
+        $event->starting = $starting_date;
+        $event->ending = $ending_date;
+        $event->save();
+
+        $g_event_response = $this->create_google_event($event);
+        $event->google_event_id = $g_event_response->id;
+        $event->save();
+        return $event;
     }
 }

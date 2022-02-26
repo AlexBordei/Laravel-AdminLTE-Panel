@@ -30,7 +30,7 @@
                             <td>{{ $elem->student->first_name }} {{ $elem->student->last_name }}</td>
                             <td><a href="{{ url('/subscription/' . $elem->subscription->id) }}">{{ $elem->subscription->id }}</a></td>
                             <td>{{ !empty($elem->starting) ? $elem->starting->format('d-m-Y H:i') : ''}}</td>
-                            <td>{{ !empty($elem->ending) ? $elem->starting->format('d-m-Y H:i') : ''}}</td>
+                            <td>{{ !empty($elem->ending) ? $elem->ending->format('d-m-Y H:i') : ''}}</td>
                             <td>{{ ucfirst($elem->status) }}</td>
                             <td>
                                 <a href="{{ url('/event/' . $elem->id . '/edit') }}"><button class="btn btn-secondary btn-flat">Edit</button></a>

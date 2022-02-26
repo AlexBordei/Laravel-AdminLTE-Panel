@@ -12,7 +12,7 @@ class Select extends Component
     public $label;
     public $value;
     public $placeholder;
-    public $type;
+    public $key;
     public $required;
 
     /**
@@ -20,7 +20,7 @@ class Select extends Component
      *
      * @return void
      */
-    public function __construct($label, $name = null, $id = null, $value = null, $placeholder = null, $required = false, $type = 'text')
+    public function __construct($label, $name = null, $id = null, $value = null, $placeholder = null, $required = false, $key = '')
     {
         $this->id = $id;
         $this->label = $label;
@@ -28,7 +28,7 @@ class Select extends Component
         $this->value = is_null($value) ? old($this->name, null) : $value;
         $this->placeholder = is_null($placeholder) ? $label : $placeholder;
         $this->required = $required;
-        $this->type = $type;
+        $this->options = $key;
     }
 
     /**

@@ -37,25 +37,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <!-- Date and time range -->
-                                <div class="form-group">
-                                    <label>Date and time range:</label>
-
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="far fa-clock"></i></span>
-                                        </div>
-                                        <input value="{{ $data['event']->starting->format('d-m-Y H:i') }} - {{ $data['event']->ending->format('d-m-Y H:i') }}" type="text" class="form-control float-right" id="reservationtime" name="time_interval">
-                                    </div>
-                                    <!-- /.input group -->
-                                </div>
-                                <!-- /.form group -->
-
-                            </div>
-                        </div>
-
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">Update</button>

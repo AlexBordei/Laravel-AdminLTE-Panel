@@ -5,6 +5,8 @@
 @section('header')
     <!-- fullCalendar -->
     <link rel="stylesheet" href="{{ asset("plugins/fullcalendar/main.css") }}">
+    <meta name="_calendar_token" content="{{csrf_token()}}" />
+
 @endsection
 
 @section('footer')
@@ -71,6 +73,23 @@
                 }
             });
 
+            var events = [];
+            $('.scheduled-event').each(function() {
+                events.push({
+                    title: $(this).data('subscription') + ' ' + $(this).data('student') + ' ' + $(this).data('instrument'),
+                    start: $(this).data('starting'),
+                    end: $(this).data('ending'),
+                    extendedProps: {
+                        'subscription': $(this).data('subscription'),
+                        'event': $(this).data('event'),
+                        'student': $(this).data('student'),
+                        'teacher': $(this).data('teacher'),
+                        'room': $(this).data('room'),
+                        'instrument': $(this).data('instrument'),
+                    }
+                });
+            });
+
             var calendar = new Calendar(calendarEl, {
                 headerToolbar: {
                     left  : 'prev,next today',
@@ -79,61 +98,85 @@
                 },
                 themeSystem: 'bootstrap',
                 //Random default events
-                events: [
-                    {
-                        title          : 'All Day Event',
-                        start          : new Date(y, m, 1),
-                        backgroundColor: '#f56954', //red
-                        borderColor    : '#f56954', //red
-                        allDay         : true
-                    },
-                    {
-                        title          : 'Long Event',
-                        start          : new Date(y, m, d - 5),
-                        end            : new Date(y, m, d - 2),
-                        backgroundColor: '#f39c12', //yellow
-                        borderColor    : '#f39c12' //yellow
-                    },
-                    {
-                        title          : 'Meeting',
-                        start          : new Date(y, m, d, 10, 30),
-                        allDay         : false,
-                        backgroundColor: '#0073b7', //Blue
-                        borderColor    : '#0073b7' //Blue
-                    },
-                    {
-                        title          : 'Lunch',
-                        start          : new Date(y, m, d, 12, 0),
-                        end            : new Date(y, m, d, 14, 0),
-                        allDay         : false,
-                        backgroundColor: '#00c0ef', //Info (aqua)
-                        borderColor    : '#00c0ef' //Info (aqua)
-                    },
-                    {
-                        title          : 'Birthday Party',
-                        start          : new Date(y, m, d + 1, 19, 0),
-                        end            : new Date(y, m, d + 1, 22, 30),
-                        allDay         : false,
-                        backgroundColor: '#00a65a', //Success (green)
-                        borderColor    : '#00a65a' //Success (green)
-                    },
-                    {
-                        title          : 'Click for Google',
-                        start          : new Date(y, m, 28),
-                        end            : new Date(y, m, 29),
-                        url            : 'https://www.google.com/',
-                        backgroundColor: '#3c8dbc', //Primary (light-blue)
-                        borderColor    : '#3c8dbc' //Primary (light-blue)
-                    }
-                ],
-                editable  : false,
+                events: events,
+                editable  : true,
                 droppable : true, // this allows things to be dropped onto the calendar !!!
-                drop      : function(info) {
-                        info.draggedEl.parentNode.removeChild(info.draggedEl);
+                drop: function() {
+                    if (!confirm("Are you sure you want to schedule this event?")) {
+                        info.revert();
+                    }
+                },
+
+                eventReceive      : function(info) {
+                    var draggedEl = $(info.draggedEl);
+
+                    info.event.setExtendedProp('subscription', draggedEl.data('subscription'));
+                    info.event.setExtendedProp('event', draggedEl.data('event'));
+                    info.event.setExtendedProp('student', draggedEl.data('student'));
+                    info.event.setExtendedProp('teacher', draggedEl.data('teacher'));
+                    info.event.setExtendedProp('room', draggedEl.data('room'));
+                    info.event.setExtendedProp('instrument', draggedEl.data('instrument'));
+
+                    var starting_date = info.event.start.getDate() + '-' + (info.event.start.getMonth() + 1) + '-' + info.event.start.getFullYear() +
+                        ' ' + ('00'+ info.event.start.getHours()).slice(-2) + ":" +
+                        ('00'+ info.event.start.getMinutes()).slice(-2);
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="_calendar_token"]').attr('content')
+                        }
+                    });
+
+                    $.ajax({
+                        url:"/event/schedule/" + draggedEl.data('event'),
+                        type:"POST",
+                        dataType:"json",
+                        data: {
+                            'starting' : starting_date
+                        },
+                        success:function (data) {
+                            info.draggedEl.parentNode.removeChild(info.draggedEl);
+                        },
+                        error: function() {
+                            info.revert();
+                        }
+                    });
+
+                },
+                eventDrop: function(info) {
+                    // alert(info.event.title + " was dropped on " + info.event.start.toISOString());
+
+                    if (!confirm("Are you sure about this change?")) {
+                        info.revert();
+                    }
+                },
+                eventClick: function(info) {
+                    var content = '<table>';
+                    $.each(info.event.extendedProps, function(key, value) {
+                        content += '<tr>';
+                        content += '    <td>' + capitalize(key) + '</td>';
+                        content += '    <td>' + value + '</td>';
+                        content += '</tr>';
+                    });
+                    content += '</table>';
+
+                    $('#modal-event-list .modal-title').text(
+                        info.event.extendedProps.subscription + ' - ' + info.event.extendedProps.student
+                    );
+                    $('#modal-event-list .modal-body').html(content);
+                    $('#modal-event-list').modal('show');
+                    // change the border color just for fun
+                    info.el.style.borderColor = 'red';
+                },
+                eventMouseLeave: function(info) {
+                    info.el.style.borderColor = 'white';
+                },
+                eventMouseEnter: function(info) {
+                    info.el.style.borderColor = 'red';
                 }
             });
 
             calendar.render();
+            $('.fc-timeGridWeek-button').click();
             // $('#calendar').fullCalendar()
 
             /* ADDING EVENTS */
@@ -150,7 +193,7 @@
                 })
             })
             $('#add-new-event').click(function (e) {
-                e.preventDefault()
+                e.preventDefault();
                 // Get value and make sure it is not null
                 var val = $('#new-event').val()
                 if (val.length == 0) {
@@ -173,6 +216,11 @@
                 // Remove event from text input
                 $('#new-event').val('')
             })
+
+            const capitalize = (s) => {
+                if (typeof s !== 'string') return ''
+                return s.charAt(0).toUpperCase() + s.slice(1)
+            }
         })
     </script>
 @endsection
@@ -190,16 +238,45 @@
                         <div id="external-events">
                             @if(count($data['events']) > 0)
                                 @foreach($data['events'] as $event)
-                                    <div class="external-event bg-info">
-                                        {{$event->subscription->id}} -
-                                        Student: {{$event->subscription->student->first_name}} {{$event->subscription->student->last_name}}<br>
-                                        Teacher: {{$event->subscription->teacher->first_name}} {{$event->subscription->teacher->last_name}}<br>
-                                        Instrument: {{$event->subscription->instrument->name}}<br>
-                                        Room: {{$event->subscription->room->name}}
-                                    </div>
+                                    @if($event->status === 'pending')
+                                        <div class="external-event bg-info"
+                                        data-event="{{$event->id}}"
+                                        data-subscription="{{$event->subscription->id}}"
+                                        data-student="{{$event->subscription->student->first_name}} {{$event->subscription->student->last_name}}"
+                                        data-teacher="{{$event->subscription->teacher->first_name}} {{$event->subscription->teacher->last_name}}"
+                                        data-instrument="{{$event->subscription->instrument->name}}"
+                                        data-room="{{$event->subscription->room->name}}"
+                                        >
+                                            {{$event->subscription->id}} -
+                                            Student: {{$event->subscription->student->first_name}} {{$event->subscription->student->last_name}}<br>
+                                            Teacher: {{$event->subscription->teacher->first_name}} {{$event->subscription->teacher->last_name}}<br>
+                                            Instrument: {{$event->subscription->instrument->name}}<br>
+                                            Room: {{$event->subscription->room->name}}
+                                        </div>
+                                    @endif
                                 @endforeach
                                 @else
                                     There are no events to be scheduled
+                            @endif
+                        </div>
+                        <div id="scheduled-events">
+                            @if(count($data['events']) > 0)
+                                @foreach($data['events'] as $event)
+                                    @if($event->status === 'scheduled')
+                                        <div class="scheduled-event"
+                                             data-event="{{$event->id}}"
+                                             data-subscription="{{$event->subscription->id}}"
+                                             data-student="{{$event->subscription->student->first_name}} {{$event->subscription->student->last_name}}"
+                                             data-teacher="{{$event->subscription->teacher->first_name}} {{$event->subscription->teacher->last_name}}"
+                                             data-instrument="{{$event->subscription->instrument->name}}"
+                                             data-room="{{$event->subscription->room->name}}"
+                                             data-starting="{{$event->starting->format('Y-m-d\TH:i:00')}}"
+                                             data-ending="{{$event->ending->format('Y-m-d\TH:i:00')}}"
+                                        ></div>
+                                    @endif
+                                @endforeach
+                            @else
+                                There are no events to be scheduled
                             @endif
                         </div>
                     </div>
@@ -240,6 +317,46 @@
                 <div class="card-body p-0">
                     <!-- THE CALENDAR -->
                     <div id="calendar"></div>
+                </div>
+                <div class="modal fade" id="modal-event-create">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title"></h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <div class="modal fade" id="modal-event-list">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title"></h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
                 </div>
                 <!-- /.card-body -->
             </div>
