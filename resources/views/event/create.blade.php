@@ -19,6 +19,8 @@
             <form action="{{ route('event.store') }}" method="POST">
                 @csrf
                 <div class="card-body">
+                    <x-forms.select label="Subscription" id="subscriptions-list" namme="subscription_id"/>
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">

@@ -156,12 +156,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 "pageLength": 25
             }
         );
-        $('#student_birth_date').datetimepicker(
-            {
-                viewMode: 'years',
-                format: 'DD/MM/YYYY'
-            }
-        );
+
         $('#teacher_birth_date').datetimepicker(
             {
                 viewMode: 'years',
