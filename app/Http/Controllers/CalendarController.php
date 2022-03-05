@@ -10,7 +10,7 @@ class CalendarController extends Controller
 {
     public function index()
     {
-        $events = Event::whereIn('status', ['pending', 'scheduled'])->get();
+        $events = Event::whereIn('status', ['pending', 'scheduled', 'confirmed'])->get();
 
         foreach ($events as $key => $event) {
             $subscription = Subscription::where('id', $event->subscription->id)->with(['student', 'teacher', 'instrument', 'room'])->first();

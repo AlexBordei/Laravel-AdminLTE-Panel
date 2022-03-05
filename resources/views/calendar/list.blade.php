@@ -126,15 +126,26 @@
                         }
                     });
 
+                    var data = {
+                        'starting' : starting_date
+                    };
+
+                    var should_refresh = false;
+                    if (confirm("Do you want this event to be recurrent weekly?")) {
+                        data['recurrent'] = 'yes';
+                        should_refresh = true;
+                    }
+
                     $.ajax({
-                        url:"/event/schedule/" + draggedEl.data('event'),
+                        url:"/calendar/schedule/" + draggedEl.data('event'),
                         type:"POST",
                         dataType:"json",
-                        data: {
-                            'starting' : starting_date
-                        },
+                        data: data,
                         success:function (data) {
                             info.draggedEl.parentNode.removeChild(info.draggedEl);
+                            if(should_refresh) {
+                                location.reload();
+                            }
                         },
                         error: function() {
                             info.revert();
@@ -147,7 +158,34 @@
 
                     if (!confirm("Are you sure about this change?")) {
                         info.revert();
+                        return;
                     }
+
+                    var starting_date = ('00'+ info.event.start.getDate()).slice(-2)+ '-' +  ('00'+ (info.event.start.getMonth() + 1)).slice(-2) + '-' + info.event.start.getFullYear() +
+                        ' ' + ('00'+ info.event.start.getHours()).slice(-2) + ":" +
+                        ('00'+ info.event.start.getMinutes()).slice(-2);
+
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="_calendar_token"]').attr('content')
+                        }
+                    });
+                    console.log(info.event.extendedProps.event);
+                    $.ajax({
+                        url:"/calendar/update/" + info.event.extendedProps.event,
+                        type:"POST",
+                        dataType:"json",
+                        data: {
+                            'starting' : starting_date
+                        },
+                        success:function (data) {
+                            //TODO: add a success info notice
+                        },
+                        error: function() {
+                            info.revert();
+                        }
+                    });
+
                 },
                 eventClick: function(info) {
                     var content = '<table>';
@@ -262,7 +300,7 @@
                         <div id="scheduled-events">
                             @if(count($data['events']) > 0)
                                 @foreach($data['events'] as $event)
-                                    @if($event->status === 'scheduled')
+                                    @if($event->status === 'scheduled' || $event->status === 'confirmed')
                                         <div class="scheduled-event"
                                              data-event="{{$event->id}}"
                                              data-subscription="{{$event->subscription->id}}"

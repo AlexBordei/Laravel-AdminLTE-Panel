@@ -16,6 +16,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Student</th>
+                            <th>Subscription Type</th>
                             <th>Subscription ID</th>
                             <th>Starting</th>
                             <th>Ending</th>
@@ -28,6 +29,7 @@
                         <tr>
                             <td>{{ $elem->id }}</td>
                             <td>{{ $elem->student->first_name }} {{ $elem->student->last_name }}</td>
+                            <td>{{ $elem->subscription_type->name }}</td>
                             <td><a href="{{ url('/subscription/' . $elem->subscription->id) }}">{{ $elem->subscription->id }}</a></td>
                             <td>{{ !empty($elem->starting) ? $elem->starting->format('d-m-Y H:i') : ''}}</td>
                             <td>{{ !empty($elem->ending) ? $elem->ending->format('d-m-Y H:i') : ''}}</td>
@@ -35,7 +37,7 @@
                             <td>
                                 <a href="{{ url('/event/' . $elem->id . '/edit') }}"><button class="btn btn-secondary btn-flat">Edit</button></a>
                                 <form action="{{ url('/event', ['id' => $elem->id]) }}" method="post" style="display: inline-block">
-                                    <input class="btn btn-danger btn-flat" type="submit" value="Delete" />
+                                    <input class="btn btn-danger btn-flat" type="submit" value="Cancel" />
                                     @method('delete')
                                     @csrf
                                 </form>

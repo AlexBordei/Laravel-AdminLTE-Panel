@@ -5,13 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
-use App\Models\Instrument;
-use App\Models\Room;
 use App\Models\Student;
 use App\Models\Subscription;
-use App\Models\Teacher;
+use App\Models\SubscriptionType;
 use Carbon\Carbon;
-use DateInterval;
 use Google\Service\Exception;
 
 class EventController extends Controller
@@ -29,7 +26,9 @@ class EventController extends Controller
 
         foreach ($events as $key => $event) {
             $student = Student::where('id', $event->subscription->student_id)->first(['first_name', 'last_name']);
+            $subscription_type = SubscriptionType::where('id', $event->subscription->subscription_type_id)->first();
             $events[$key]->student = $student;
+            $events[$key]->subscription_type = $subscription_type;
         }
         return $this->buildResponse('event.list', $events);
     }
@@ -143,12 +142,27 @@ class EventController extends Controller
             'status' => 'required|in:pending,scheduled,confirmed,canceled',
         ]);
 
-//        $g_event_response = $this->update_google_event($request, $event);
+        $event->status = $request->get('status');
+
+        $delete_event_status = false;
+        $update_event_status = false;
+
+        if(in_array($request->get('status'), ['pending', 'canceled'])) {
+            $g_event_response = $this->delete_google_event($event);
+            $delete_event_status = $g_event_response;
+        } else {
+            $g_event_response = $this->update_google_event($event);
+            $update_event_status = $g_event_response;
+        }
+
+        if($delete_event_status === false && $update_event_status === true)  {
+            $event->google_event_id = $g_event_response->id;
+        } else if($delete_event_status === true && $update_event_status === false) {
+            $event->google_event_id = null;
+        }
 
         $event->fill([
-            'subscription_id' => $request->get('subscription_id'),
-            'status' => $request->get('status'),
-//            'google_event_id' => $g_event_response->id
+            'subscription_id' => $request->get('subscription_id')
         ])->save();
 
         return redirect()->route('event.index')->with('success', 'Event successfully updated!');
@@ -163,18 +177,17 @@ class EventController extends Controller
     public function destroy(Event $event)
     {
         try {
-            if(!empty($event->google_event_id) ) {
-                $this->delete_google_event($event);
-            }
+            $this->delete_google_event($event);
 
-            $event->deleteOrFail();
+            $event->status = 'canceled';
+            $event->save();
             return redirect()
                 ->back()
-                ->with('success', 'Event deleted successfully!');
+                ->with('success', 'Event canceled successfully!');
         } catch (\Exception $e) {
             return redirect()
                 ->back()
-                ->withErrors(['msg' => 'There was an error deleting the event!']);
+                ->withErrors(['msg' => 'There was an error canceling the event!']);
         }
     }
 
@@ -220,7 +233,7 @@ class EventController extends Controller
         return $g_event_response;
     }
     private function delete_google_event($event) {
-        if(!empty($event->get('google_event_id'))) {
+        if(!is_null($event->google_event_id)) {
             try {
                 $subscription = Subscription::where('id', $event->subscription_id)->with('teacher')->first();
 
@@ -242,7 +255,7 @@ class EventController extends Controller
         }
         return false;
     }
-    private function update_google_event($request, $event) {
+    private function update_google_event($event) {
         if(!empty($event->get('google_event_id'))) {
             try {
                 $subscription = Subscription::where('id', $event->subscription_id)->with('teacher')->first();
@@ -257,7 +270,7 @@ class EventController extends Controller
                     $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id);
                 }
                 $g_event->delete();
-                return $this->create_google_event($request);
+                return $this->create_google_event($event);
             } catch (Exception $e) {
                 // TODO: add this to error notifications
             }
@@ -281,6 +294,57 @@ class EventController extends Controller
         $event->save();
 
         $g_event_response = $this->create_google_event($event);
+        $event->google_event_id = $g_event_response->id;
+        $event->save();
+
+        if(isset($_POST['recurrent']) && $_POST['recurrent'] === 'yes') {
+            $other_events = Event::where(
+                [
+                    'subscription_id' => $event->subscription_id,
+                    'status' => 'pending'
+                ]
+            )->get();
+
+            $weeks_number = 1;
+            foreach ($other_events as $event) {
+                $starting_date = \DateTime::createFromFormat('d-m-Y H:i', $_POST['starting']);
+                $ending_date = \DateTime::createFromFormat('d-m-Y H:i', $_POST['starting']);
+                $ending_date->modify('+60 minutes');
+
+                $starting_date->modify('+'.$weeks_number.' week');
+                $ending_date->modify('+'.$weeks_number.' week');
+
+                $event->status = 'scheduled';
+                $event->starting = $starting_date;
+                $event->ending = $ending_date;
+                $event->save();
+
+                $g_event_response = $this->create_google_event($event);
+                $event->google_event_id = $g_event_response->id;
+                $event->save();
+                $weeks_number++;
+            }
+
+        }
+
+        return $event;
+    }
+
+    public function calendar_update(Event $event) {
+//        $this->validate([
+//            'starting' => 'required',
+//            'id' => 'required|exists:events,id'
+//        ]);
+
+        $starting_date = \DateTime::createFromFormat('d-m-Y H:i', $_POST['starting']);
+        $ending_date = \DateTime::createFromFormat('d-m-Y H:i', $_POST['starting']);
+        $ending_date->modify('+60 minutes');
+
+        $event->starting = $starting_date;
+        $event->ending = $ending_date;
+        $event->save();
+
+        $g_event_response = $this->update_google_event($event);
         $event->google_event_id = $g_event_response->id;
         $event->save();
         return $event;

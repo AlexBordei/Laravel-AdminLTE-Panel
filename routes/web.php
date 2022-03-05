@@ -37,7 +37,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/room', RoomController::class);
     Route::resource('/instrument', InstrumentController::class);
     Route::resource('/event', EventController::class);
-    Route::post('/event/schedule/{event}', [EventController::class, 'schedule']);
+    Route::post('/calendar/schedule/{event}', [EventController::class, 'schedule']);
+    Route::post('/calendar/update/{event}', [EventController::class, 'calendar_update']);
 
     Route::resource('/subscription', SubscriptionController::class);
     Route::resource('/subscription_type', SubscriptionTypeController::class);
