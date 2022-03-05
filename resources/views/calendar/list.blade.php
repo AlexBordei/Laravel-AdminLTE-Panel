@@ -86,6 +86,7 @@
                         'teacher': $(this).data('teacher'),
                         'room': $(this).data('room'),
                         'instrument': $(this).data('instrument'),
+                        'edit': $(this).data('edit'),
                     }
                 });
             });
@@ -130,7 +131,6 @@
                         'starting' : starting_date
                     };
 
-                    var should_refresh = false;
                     if (confirm("Do you want this event to be recurrent weekly?")) {
                         data['recurrent'] = 'yes';
                         should_refresh = true;
@@ -143,9 +143,7 @@
                         data: data,
                         success:function (data) {
                             info.draggedEl.parentNode.removeChild(info.draggedEl);
-                            if(should_refresh) {
-                                location.reload();
-                            }
+                            location.reload();
                         },
                         error: function() {
                             info.revert();
@@ -310,6 +308,7 @@
                                              data-room="{{$event->subscription->room->name}}"
                                              data-starting="{{$event->starting->format('Y-m-d\TH:i:00')}}"
                                              data-ending="{{$event->ending->format('Y-m-d\TH:i:00')}}"
+                                             data-edit='<a href="/event/{{$event->id}}/edit">Click here to edit</a>'
                                         ></div>
                                     @endif
                                 @endforeach
