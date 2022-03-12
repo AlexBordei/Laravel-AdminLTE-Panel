@@ -25,7 +25,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach( $data as $elem )
+                        @foreach( $data['events'] as $elem )
                         <tr>
                             <td>{{ $elem->id }}</td>
                             <td>{{ $elem->student->first_name }} {{ $elem->student->last_name }}</td>

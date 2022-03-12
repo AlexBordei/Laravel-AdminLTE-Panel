@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
+use App\Models\Reservation;
 use App\Models\Student;
 use App\Models\Subscription;
 use App\Models\SubscriptionType;
+use App\Models\Teacher;
 use Carbon\Carbon;
 use Google\Service\Exception;
 
@@ -24,13 +26,24 @@ class EventController extends Controller
             'subscription',
         ])->get();
 
+        $reservations = Reservation::all();
         foreach ($events as $key => $event) {
             $student = Student::where('id', $event->subscription->student_id)->first(['first_name', 'last_name']);
             $subscription_type = SubscriptionType::where('id', $event->subscription->subscription_type_id)->first();
             $events[$key]->student = $student;
             $events[$key]->subscription_type = $subscription_type;
         }
-        return $this->buildResponse('event.list', $events);
+
+        foreach ($reservations as $key => $reservation) {
+            $student = Student::where('id', $reservation->student_id)->first(['first_name', 'last_name']);
+            $teacher = Teacher::where('id', $reservation->teacher_id)->first(['first_name', 'last_name']);
+            $reservations[$key]->student = $student;
+            $reservations[$key]->teacher = $teacher;
+        }
+        return $this->buildResponse('event.list', [
+            'events' => $events,
+            'reservations' => $reservations
+        ]);
     }
 
     /**
@@ -191,45 +204,52 @@ class EventController extends Controller
         }
     }
 
-    private function create_google_event($event) {
-
-        $subscription = Subscription::where('id', $event->subscription_id)->with(
-            [
-                'student',
-                'teacher',
-                'instrument',
-                'room',
-        ]
-        )->first();
-
+    private function create_google_event($event, $is_reservation = false) {
         $g_event = [];
+        $teacher = null;
+        if($is_reservation === true) {
+            $student = Student::where('id', $event->student_id)->firstOrFail();
+            $teacher = Teacher::where('id', $event->teacher_id)->firstOrFail();
 
-        $g_event['name'] = $subscription->instrument->name . ' ' . $subscription->student->first_name . ' ' . $subscription->student->last_name;
-        $g_event['description']  = "Student: " . ' ' . $subscription->student->first_name . ' ' . $subscription->student->last_name . "\n";
-        $g_event['description']  .= "Room: " . ' ' . $subscription->room->name . "\n";
-        $g_event['description']  .= "Instrument: " . ' ' . $subscription->instrument->name . "\n";
-        $g_event['description']  .= "Status: " . ' ' . $event->status . "\n";
-        $g_event['startDateTime']  = Carbon::create($event->starting);
-        $g_event['endDateTime']  = Carbon::create($event->ending);
+            $g_event['name'] = 'Reserved: ' . $student->first_name . ' ' . $student->last_name;
+            $g_event['colorId'] = 8;
+        }
+        else {
+            $subscription = Subscription::where('id', $event->subscription_id)->with(
+                [
+                    'student',
+                    'teacher',
+                    'instrument',
+                    'room',
+                ]
+            )->first();
 
+            $g_event['name'] = $subscription->instrument->name . ' ' . $subscription->student->first_name . ' ' . $subscription->student->last_name;
+            $g_event['description'] = "Student: " . ' ' . $subscription->student->first_name . ' ' . $subscription->student->last_name . "\n";
+            $g_event['description'] .= "Room: " . ' ' . $subscription->room->name . "\n";
+            $g_event['description'] .= "Instrument: " . ' ' . $subscription->instrument->name . "\n";
+            $g_event['description'] .= "Status: " . ' ' . $event->status . "\n";
+
+            $teacher = $subscription->teacher;
+        }
+        $g_event['startDateTime'] = Carbon::create($event->starting);
+        $g_event['endDateTime'] = Carbon::create($event->ending);
         $g_event_response = null;
 
         try {
-            if (!empty($subscription->teacher->google_calendar_id)) {
+            if (!empty($teacher->google_calendar_id)) {
                 try {
-                    $g_event_response = \Spatie\GoogleCalendar\Event::create($g_event, $subscription->teacher->google_calendar_id);
+                    $g_event_response = \Spatie\GoogleCalendar\Event::create($g_event, $teacher->google_calendar_id);
                 } catch (Exception $e) {
                     $g_event_response = \Spatie\GoogleCalendar\Event::create($g_event);
                 }
             } else {
                 $g_event_response = \Spatie\GoogleCalendar\Event::create($g_event);
             }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             // TODO: add this to error notifications
             return false;
         }
-
         return $g_event_response;
     }
     private function delete_google_event($event) {
@@ -324,7 +344,30 @@ class EventController extends Controller
                 $event->save();
                 $weeks_number++;
             }
+            // Reservations
+            if(isset($_POST['timeslot_reservations']) && $_POST['timeslot_reservations'] === 'yes') {
+                for($i = $weeks_number; $i < $weeks_number + 24; $i++) {
+                    $reservation = new Reservation();
+                    $subscription = Subscription::where('id', $event->subscription_id)->first();
+                    $starting_date = \DateTime::createFromFormat('d-m-Y H:i', $_POST['starting']);
+                    $ending_date = \DateTime::createFromFormat('d-m-Y H:i', $_POST['starting']);
+                    $ending_date->modify('+60 minutes');
 
+                    $starting_date->modify('+'.$i.' week');
+                    $ending_date->modify('+'.$i.' week');
+
+                    $reservation->status = 'scheduled';
+                    $reservation->starting = $starting_date;
+                    $reservation->ending = $ending_date;
+                    $reservation->student_id = $subscription->student_id;
+                    $reservation->teacher_id = $subscription->teacher_id;
+                    $reservation->save();
+
+                    $g_event_response = $this->create_google_event($reservation, true);
+                    $reservation->google_event_id = $g_event_response->id;
+                    $reservation->save();
+                }
+            }
         }
 
         return $event;

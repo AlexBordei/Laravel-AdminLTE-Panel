@@ -75,11 +75,20 @@
 
             var events = [];
             $('.scheduled-event').each(function() {
-                events.push({
-                    title: $(this).data('subscription') + ' ' + $(this).data('student') + ' ' + $(this).data('instrument'),
+                var event = {
                     start: $(this).data('starting'),
                     end: $(this).data('ending'),
-                    extendedProps: {
+                };
+                switch($(this).data('type')) {
+                    case 'reservation':
+                        event.title =  'Reservation: ' + $(this).data('student');
+                        event.extendedProps = {};
+                        event.extendedProps.type = 'reservation';
+                        event.backgroundColor = '#c0c0c0';
+                        break;
+                    default:
+                        event.title = $(this).data('subscription') + ' ' + $(this).data('student') + ' ' + $(this).data('instrument');
+                        event.extendedProps = {
                         'subscription': $(this).data('subscription'),
                         'event': $(this).data('event'),
                         'student': $(this).data('student'),
@@ -87,8 +96,12 @@
                         'room': $(this).data('room'),
                         'instrument': $(this).data('instrument'),
                         'edit': $(this).data('edit'),
-                    }
-                });
+                        'type': 'event'
+                        };
+                        break;
+                }
+
+                events.push(event);
             });
 
             var calendar = new Calendar(calendarEl, {
@@ -107,7 +120,6 @@
                         info.revert();
                     }
                 },
-
                 eventReceive      : function(info) {
                     var draggedEl = $(info.draggedEl);
 
@@ -134,6 +146,9 @@
                     if (confirm("Do you want this event to be recurrent weekly?")) {
                         data['recurrent'] = 'yes';
                         should_refresh = true;
+                        if (confirm("Do you want this timeslot to be reserved into the future?")) {
+                            data['timeslot_reservations'] = 'yes';
+                        }
                     }
 
                     $.ajax({
@@ -186,20 +201,22 @@
 
                 },
                 eventClick: function(info) {
-                    var content = '<table>';
-                    $.each(info.event.extendedProps, function(key, value) {
-                        content += '<tr>';
-                        content += '    <td>' + capitalize(key) + '</td>';
-                        content += '    <td>' + value + '</td>';
-                        content += '</tr>';
-                    });
-                    content += '</table>';
+                    if(info.event.extendedProps.type === 'event') {
+                        var content = '<table>';
+                        $.each(info.event.extendedProps, function (key, value) {
+                            content += '<tr>';
+                            content += '    <td>' + capitalize(key) + '</td>';
+                            content += '    <td>' + value + '</td>';
+                            content += '</tr>';
+                        });
+                        content += '</table>';
 
-                    $('#modal-event-list .modal-title').text(
-                        info.event.extendedProps.subscription + ' - ' + info.event.extendedProps.student
-                    );
-                    $('#modal-event-list .modal-body').html(content);
-                    $('#modal-event-list').modal('show');
+                        $('#modal-event-list .modal-title').text(
+                            info.event.extendedProps.subscription + ' - ' + info.event.extendedProps.student
+                        );
+                        $('#modal-event-list .modal-body').html(content);
+                        $('#modal-event-list').modal('show');
+                    }
                     // change the border color just for fun
                     info.el.style.borderColor = 'red';
                 },
@@ -272,9 +289,8 @@
                     <div class="card-body">
                         <!-- the events -->
                         <div id="external-events">
-                            @if(count($data['events']) > 0)
-                                @foreach($data['events'] as $event)
-                                    @if($event->status === 'pending')
+                            @if(count($data['events']['pending']) > 0)
+                                @foreach($data['events']['pending'] as $event)
                                         <div class="external-event bg-info"
                                         data-event="{{$event->id}}"
                                         data-subscription="{{$event->subscription->id}}"
@@ -289,16 +305,14 @@
                                             Instrument: {{$event->subscription->instrument->name}}<br>
                                             Room: {{$event->subscription->room->name}}
                                         </div>
-                                    @endif
                                 @endforeach
                                 @else
                                     There are no events to be scheduled
                             @endif
                         </div>
                         <div id="scheduled-events">
-                            @if(count($data['events']) > 0)
-                                @foreach($data['events'] as $event)
-                                    @if($event->status === 'scheduled' || $event->status === 'confirmed')
+                            @if(count($data['events']['scheduled']) > 0)
+                                @foreach($data['events']['scheduled'] as $event)
                                         <div class="scheduled-event"
                                              data-event="{{$event->id}}"
                                              data-subscription="{{$event->subscription->id}}"
@@ -310,11 +324,21 @@
                                              data-ending="{{$event->ending->format('Y-m-d\TH:i:00')}}"
                                              data-edit='<a href="/event/{{$event->id}}/edit">Click here to edit</a>'
                                         ></div>
-                                    @endif
                                 @endforeach
-                            @else
-                                There are no events to be scheduled
                             @endif
+                                @if(count($data['reservations']) > 0)
+                                    @foreach($data['reservations'] as $reservation)
+                                        @if($reservation->status === 'scheduled')
+                                            <div class="scheduled-event"
+                                                 data-type="reservation"
+                                                 data-student="{{$reservation->student->first_name}} {{$reservation->student->last_name}}"
+                                                 data-teacher="{{$reservation->teacher->first_name}} {{$reservation->teacher->last_name}}"
+                                                 data-starting="{{$reservation->starting->format('Y-m-d\TH:i:00')}}"
+                                                 data-ending="{{$reservation->ending->format('Y-m-d\TH:i:00')}}"
+                                            ></div>
+                                        @endif
+                                    @endforeach
+                                @endif
                         </div>
                     </div>
                     <!-- /.card-body -->

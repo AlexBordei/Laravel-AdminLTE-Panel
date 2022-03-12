@@ -103,7 +103,7 @@ class PaymentController extends Controller
         $subscription = Subscription::where('id', $request->subscription_id)->first();
         if(! empty($subscription)) {
             $subscription->payment_id = $payment->id;
-            if($payment->status === 'paid' && isset($request->activate_subscription)) {
+            if($payment->status === 'paid' && isset($request->activate_subscription) && $subscription->status !== 'active') {
                 $subscription->status = 'active';
                 $subscription_type = SubscriptionType::where('id', $subscription->subscription_type_id)->first();
 
