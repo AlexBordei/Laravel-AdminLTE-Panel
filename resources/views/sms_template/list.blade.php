@@ -16,7 +16,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Content</th>
+                                <th>Message</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
@@ -25,7 +25,7 @@
                                 <tr>
                                     <td>{{ $elem->id }}</td>
                                     <td>{{ $elem->name }}</td>
-                                    <td>{{ $elem->content }}</td>
+                                    <td>{{ $elem->message }}</td>
                                     <td>
                                         <a href="{{ url('/sms_template/' . $elem->id) }}"><button class="btn btn-secondary btn-flat">View</button></a>
                                         <form action="{{ url('/sms_template', ['id' => $elem->id]) }}" method="post" style="display: inline-block">

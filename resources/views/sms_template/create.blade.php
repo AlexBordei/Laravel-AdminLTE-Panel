@@ -16,11 +16,15 @@
                         <label for="name">Name</label>
                         <input type="text" name="name" class="form-control" placeholder="Name">
                     </div>
+                    <div class="form-group">
+                        <label for="view">View path</label>
+                        <input type="text" name="view" class="form-control" placeholder="View">
+                    </div>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="message">Content</label>
-                                <textarea class="form-control" rows="3" name="content" placeholder="Enter ..."></textarea>
+                                <label for="message">Message</label>
+                                <textarea class="form-control" rows="3" name="message" placeholder="Enter ..."></textarea>
                             </div>
                         </div>
                     </div>

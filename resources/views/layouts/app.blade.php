@@ -165,6 +165,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         );
 
         $('#students-list').select2();
+        $('#sms_templates-list').select2();
         $('#users-list').select2();
         $('#teachers-list').select2();
         $('#instruments-list').select2();

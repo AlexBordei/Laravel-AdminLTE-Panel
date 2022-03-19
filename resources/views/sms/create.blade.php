@@ -2,6 +2,19 @@
 
 @section('title', 'Send new sms')
 
+@section('footer')
+    <script>
+        $('#sms_templates-list').on('change', function(){
+           if($(this).val().length > 0) {
+               $('textarea[name="message"]').parent().hide();
+           } else {
+               $('textarea[name="message"]').parent().show();
+           }
+        });
+    </script>
+
+@endsection
+
 @section('content')
     <div class="row">
         <div class="col-md-12">
@@ -26,7 +39,21 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-md-6"></div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Template</label>
+                                    <select class="form-control" name="sms_template_id" id="sms_templates-list">
+                                        <option value="">Custom message</option>
+                                        @isset($data['sms_templates'])
+                                            @foreach($data['sms_templates'] as $sms_templates)
+                                                <option value="{{ $sms_templates->id }}">{{ $sms_templates->name }}</option>
+                                            @endforeach
+                                        @endisset
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="row">

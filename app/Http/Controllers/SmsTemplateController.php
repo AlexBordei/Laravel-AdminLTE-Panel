@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Instrument;
-use App\Models\Service;
-use App\Models\Sms;
+use App\Http\Requests\StoreSMSTemplateRequest;
 use App\Models\SmsTemplate;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 
 class SmsTemplateController extends Controller
 {
@@ -31,5 +27,21 @@ class SmsTemplateController extends Controller
     public function create()
     {
         return $this->buildResponse('sms_template.create');
+    }
+
+    public function store(StoreSMSTemplateRequest $request) {
+        $request->validate([
+            'name' => 'required',
+            'message' => 'required|max:255',
+            'view' => 'required',
+        ]);
+
+        SmsTemplate::create([
+            'name' => $request->name,
+            'message' => $request->message,
+            'view' => $request->view,
+        ]);
+
+        return redirect('/sms_template')->with('success', 'SMS Template have been successfully saved!');
     }
 }

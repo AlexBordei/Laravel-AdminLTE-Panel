@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
         $user->name = 'Alex Bordei';
         $user->email = 'alex@whiz.ro';
         $user->password = Hash::make('12qwaszx');
-        $user->api_token = Str::random(60);
+        $user->api_token = "UtUjLzaploRhWnQZfOU3J8S9WGGqXx6rcMqJHPnz19qXmBOAKtYVE6xtQS5F";
         $user->save();
     }
 }
