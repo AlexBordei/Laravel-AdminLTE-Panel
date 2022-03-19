@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use App\Models\Sms;
+use App\Models\SmsTemplate;
 use App\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -41,7 +42,8 @@ class SmsController extends Controller
     public function create()
     {
         $students = Student::all();
-        return $this->buildResponse('sms.create', array('students' => $students));
+        $smsTemplates = SmsTemplate::all();
+        return $this->buildResponse('sms.create', array('students' => $students, 'sms_templates' => $smsTemplates));
     }
 
     /**
@@ -54,15 +56,26 @@ class SmsController extends Controller
     {
         $validated = $request->validate([
             'student_id' => 'exists:students,id',
-            'message' => 'required|max:255',
+            'message' => 'required_without:sms_template_id|max:255',
+            'sms_template_id' => 'exists:sms_templates,id',
         ]);
 
         $student = Student::where('id', $request->student_id)->first();
 
+        $message = '';
+
+        if(empty($request->message)) {
+            $smsTemplate = SmsTemplate::where('id', $request->sms_template_id)->first();
+
+            $message = view($smsTemplate->view, ['student' => $student])->render();
+        } else {
+            $message = $request->message;
+        }
+
         $sms = Sms::create([
             'from' => env('SMS_FROM_NUMBER', ''),
             'to' => $student->phone,
-            'message' => $request->message,
+            'message' => $message,
             'status' => 'pending'
         ]);
 
