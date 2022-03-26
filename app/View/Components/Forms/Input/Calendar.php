@@ -6,9 +6,9 @@ use App\View\Components\Forms\Input;
 
 class Calendar extends Input
 {
-    public function __construct($label, $name = null, $value = null, $placeholder = null, $required = false, $type = 'text')
+    public function __construct($label, $name = null, $value = null, $placeholder = null, $required = false, $type = 'text', $isEdit = false)
     {
-        parent::__construct($label, $name, $value, $placeholder, $required, $type);
+        parent::__construct($label, $name, $value, $placeholder, $required, $type, $isEdit);
     }
 
 

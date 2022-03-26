@@ -10,12 +10,14 @@
     </div>
 </div>
 @section('footer')
-    <script>
-        $('#{{ $name  }}_date').datetimepicker(
-            {
-                viewMode: 'years',
-                format: 'DD/MM/YYYY'
-            }
-        );
-    </script>
+    @if(!empty($value) && $isEdit === false)
+        <script>
+            $('#{{ $name  }}_date').datetimepicker(
+                {
+                    viewMode: 'years',
+                    format: 'DD/MM/YYYY'
+                }
+            );
+        </script>
+    @endif
 @endsection

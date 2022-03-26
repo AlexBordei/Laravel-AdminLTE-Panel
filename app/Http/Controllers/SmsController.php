@@ -66,13 +66,12 @@ class SmsController extends Controller
 
         if(empty($request->message)) {
             $smsTemplate = SmsTemplate::where('id', $request->sms_template_id)->first();
-
             $message = view($smsTemplate->view, ['student' => $student])->render();
         } else {
             $message = $request->message;
         }
 
-        $sms = Sms::create([
+        Sms::create([
             'from' => env('SMS_FROM_NUMBER', ''),
             'to' => $student->phone,
             'message' => $message,

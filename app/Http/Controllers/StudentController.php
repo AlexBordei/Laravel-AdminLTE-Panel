@@ -43,20 +43,22 @@ class StudentController extends Controller
             'last_name' => 'required|max:255',
             'phone' => 'required|max:255',
             'email' => 'required|email|max:255',
-            'birth_date' => 'required|date_format:d/m/Y',
         ]);
 
-        $date = Carbon::createFromFormat('d/m/Y', $request->get('birth_date'));
 
-        Student::create(
-            [
-                'first_name' => $request->get('first_name'),
-                'last_name' => $request->get('last_name'),
-                'phone' => $request->get('phone'),
-                'email' => $request->get('email'),
-                'birth_date' => $date->format('Y-m-d'),
-            ]
-        );
+        $data = [
+            'first_name' => $request->get('first_name'),
+            'last_name' => $request->get('last_name'),
+            'phone' => $request->get('phone'),
+            'email' => $request->get('email'),
+            ];
+
+        if(!empty($request->get('birth_date'))) {
+            $date = Carbon::createFromFormat('d/m/Y', $request->get('birth_date'));
+            $data['birth_date'] = $date->format('Y-m-d');
+        }
+
+        Student::create($data);
 
         return redirect('/student')->with('success', 'Student has been added successfully!');
     }
