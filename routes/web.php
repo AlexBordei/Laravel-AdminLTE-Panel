@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\GeneralModelsController;
 use App\Http\Controllers\InstrumentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RoomController;
@@ -47,6 +48,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/sms', SmsController::class);
     Route::resource('/sms_template', SmsTemplateController::class);
     Route::post('/sms/resend/{sms}', [SmsController::class, 'resend']);
+    Route::get('/model/{model_name}', [GeneralModelsController::class, 'getModelAttributes']);
 });
 
 require __DIR__.'/auth.php';

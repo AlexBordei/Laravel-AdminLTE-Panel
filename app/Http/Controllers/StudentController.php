@@ -81,9 +81,10 @@ class StudentController extends Controller
      */
     public function edit(Student $student)
     {
-        $date = strtotime($student->birth_date);
-
-        $student->birth_date = Date('d/m/Y', $date);
+        if(isset($student->birth_date)) {
+            $date = strtotime($student->birth_date);
+            $student->birth_date = Date('d/m/Y', $date);
+        }
         return $this->buildResponse('student.edit', $student);
     }
 

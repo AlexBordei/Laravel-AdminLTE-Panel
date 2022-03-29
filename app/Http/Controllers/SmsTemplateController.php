@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSMSTemplateRequest;
 use App\Models\SmsTemplate;
+use App\Models\User;
+use Illuminate\Support\Facades\Schema;
 
 class SmsTemplateController extends Controller
 {
@@ -26,7 +28,13 @@ class SmsTemplateController extends Controller
      */
     public function create()
     {
-        return $this->buildResponse('sms_template.create');
+        $path = app_path() . "/Models";
+        $models = GeneralModelsController::getModels($path);
+        $models = array_map(function($model) use ($path) {
+            return str_replace($path . '/', '', $model);
+        }, (array)$models );
+
+        return $this->buildResponse('sms_template.create', ['models' => $models]);
     }
 
     public function store(StoreSMSTemplateRequest $request) {
@@ -44,4 +52,6 @@ class SmsTemplateController extends Controller
 
         return redirect('/sms_template')->with('success', 'SMS Template have been successfully saved!');
     }
+
+
 }

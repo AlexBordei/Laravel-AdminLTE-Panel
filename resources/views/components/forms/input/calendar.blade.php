@@ -10,7 +10,6 @@
     </div>
 </div>
 @section('footer')
-    @if(!empty($value) && $isEdit === false)
         <script>
             $('#{{ $name  }}_date').datetimepicker(
                 {
@@ -19,5 +18,4 @@
                 }
             );
         </script>
-    @endif
 @endsection
