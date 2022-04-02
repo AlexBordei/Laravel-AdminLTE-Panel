@@ -98,6 +98,7 @@
                         'edit': $(this).data('edit'),
                         'type': 'event'
                         };
+                        event.backgroundColor = $(this).data('color');
                         break;
                 }
 
@@ -291,7 +292,7 @@
                         <div id="external-events">
                             @if(count($data['events']['pending']) > 0)
                                 @foreach($data['events']['pending'] as $event)
-                                        <div class="external-event bg-info"
+                                        <div class="external-event"  style="background-color: {{!empty($event->subscription->teacher->calendar_color) ? $event->subscription->teacher->calendar_color : '#007bff' }}"
                                         data-event="{{$event->id}}"
                                         data-subscription="{{$event->subscription->id}}"
                                         data-student="{{$event->subscription->student->first_name}} {{$event->subscription->student->last_name}}"
@@ -322,6 +323,7 @@
                                              data-room="{{$event->subscription->room->name}}"
                                              data-starting="{{$event->starting->format('Y-m-d\TH:i:00')}}"
                                              data-ending="{{$event->ending->format('Y-m-d\TH:i:00')}}"
+                                             data-color="{{!empty($event->subscription->teacher->calendar_color) ? $event->subscription->teacher->calendar_color : '#007bff'}}"
                                              data-edit='<a href="/event/{{$event->id}}/edit">Click here to edit</a>'
                                         ></div>
                                 @endforeach

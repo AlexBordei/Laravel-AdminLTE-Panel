@@ -9,6 +9,8 @@ use App\Models\Instrument;
 use App\Models\Room;
 use App\Models\Teacher;
 use Carbon\Carbon;
+use Google_Service_Calendar;
+use Spatie\GoogleCalendar\GoogleCalendarFactory;
 
 class TeacherController extends Controller
 {
@@ -40,17 +42,21 @@ class TeacherController extends Controller
     {
         $instruments = Instrument::all(['id', 'name']);
         $rooms = Room::all(['id', 'name']);
-        return $this->buildResponse('teacher.create', ['instruments' => $instruments, 'rooms' => $rooms, 'colors' => ColorsAsset::$colors]);
+
+        return $this->buildResponse('teacher.create', ['instruments' => $instruments, 'rooms' => $rooms, 'colors' => $this->getCalendarColors()]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreTeacherRequest  $request
+     * @param \App\Http\Requests\StoreTeacherRequest $request
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Spatie\GoogleCalendar\Exceptions\InvalidConfiguration
      */
     public function store(StoreTeacherRequest $request)
     {
+
+
         $validated = $request->validate([
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
@@ -106,7 +112,7 @@ class TeacherController extends Controller
             'instruments' => Instrument::all(['id', 'name']),
             'rooms' => Room::all(['id', 'name']),
             'teacher' => $teacher,
-            'colors' => ColorsAsset::$colors
+            'colors' => $this->getCalendarColors()
         ]);
     }
 
@@ -167,5 +173,18 @@ class TeacherController extends Controller
                 ->back()
                 ->withErrors(['msg' => 'There was an error deleting the teacher!']);
         }
+    }
+
+    private function getCalendarColors() {
+        $config = config('google-calendar');
+
+        $client = GoogleCalendarFactory::createAuthenticatedGoogleClient($config);
+        $service = new Google_Service_Calendar($client);
+
+        $colors = array_map( function($e) {
+            return $e['background'];
+        }, $service->colors->get()['calendar']);
+
+        return array_values($colors);
     }
 }

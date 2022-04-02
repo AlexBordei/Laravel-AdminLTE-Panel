@@ -46,7 +46,7 @@
                     </div>
                     <div class="form-group">
                         <label for="calendar_color">Calendar color</label>
-                        <input type="color" class="form-control" list="presets" name="calendar_color">
+                        <input type="color" class="form-control" list="presets" name="calendar_color" value="#a47ae2">
                         <datalist id="presets">
                             @foreach($data['colors'] as $color)
                                 <option value="{{ $color }}">{{ $color }}</option>
