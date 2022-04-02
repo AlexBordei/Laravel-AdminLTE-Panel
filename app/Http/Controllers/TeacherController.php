@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Assets\ColorsAsset;
 use App\Http\Requests\StoreTeacherRequest;
 use App\Http\Requests\UpdateTeacherRequest;
 use App\Models\Instrument;
@@ -39,7 +40,7 @@ class TeacherController extends Controller
     {
         $instruments = Instrument::all(['id', 'name']);
         $rooms = Room::all(['id', 'name']);
-        return $this->buildResponse('teacher.create', ['instruments' => $instruments, 'rooms' => $rooms]);
+        return $this->buildResponse('teacher.create', ['instruments' => $instruments, 'rooms' => $rooms, 'colors' => ColorsAsset::$colors]);
     }
 
     /**
@@ -72,7 +73,8 @@ class TeacherController extends Controller
                 'birth_date' => $date->format('Y-m-d'),
                 'google_calendar_id' => $request->get('google_calendar_id'),
                 'instrument_ids' => json_encode($request->get('instrument_ids')),
-                'room_id' => $request->get('room_id')
+                'room_id' => $request->get('room_id'),
+                'calendar_color' => $request->get('calendar_color')
             ]
         );
 
@@ -97,13 +99,15 @@ class TeacherController extends Controller
      */
     public function edit(Teacher $teacher)
     {
-
-        $teacher['instruments'] = Instrument::all(['id', 'name']);
-        $teacher['rooms'] = Room::all(['id', 'name']);
         $date = strtotime($teacher->birth_date);
-
         $teacher->birth_date = Date('d/m/Y', $date);
-        return $this->buildResponse('teacher.edit', $teacher);
+
+        return $this->buildResponse('teacher.edit', [
+            'instruments' => Instrument::all(['id', 'name']),
+            'rooms' => Room::all(['id', 'name']),
+            'teacher' => $teacher,
+            'colors' => ColorsAsset::$colors
+        ]);
     }
 
     /**
@@ -136,7 +140,9 @@ class TeacherController extends Controller
             'birth_date' => $date->format('Y-m-d'),
             'google_calendar_id' => $request->get('google_calendar_id'),
             'instrument_ids' => json_encode($request->get('instrument_ids')),
-            'room_id' => $request->get('room_id')
+            'room_id' => $request->get('room_id'),
+            'calendar_color' => $request->get('calendar_color')
+
         ])->save();
 
         return back()->with('success', 'Teacher successfully updated!');

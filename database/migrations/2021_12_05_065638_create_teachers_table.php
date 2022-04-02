@@ -20,6 +20,7 @@ class CreateTeachersTable extends Migration
             $table->string('phone');
             $table->string('email');
             $table->date('birth_date');
+            $table->string('calendar_color')->nullable();
             $table->string('google_calendar_id')->nullable();
             $table->string('instrument_ids')->nullable();
             $table->timestamps();

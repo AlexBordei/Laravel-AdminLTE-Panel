@@ -21,6 +21,7 @@
                             <th>Email</th>
                             <th>Birth date</th>
                             <th>Google Calendar Id</th>
+                            <th>Calendar color</th>
                             <th>Instruments</th>
                             <th>Preferred Room</th>
                             <th>Actions</th>
@@ -36,6 +37,7 @@
                             <td>{{ $elem->email }}</td>
                             <td>{{ ! empty($elem->birth_date) ? (new Carbon\Carbon($elem->birth_date))->format('d/m/Y') : '' }}</td>
                             <td>{{ $elem->google_calendar_id }}</td>
+                            <td style="background-color: {{ $elem->calendar_color }}; "></td>
                             <td>
                                 @if(isset($elem['instruments']))
                                     @foreach($elem['instruments'] as $instrument)

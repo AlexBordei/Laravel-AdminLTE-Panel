@@ -44,6 +44,15 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="calendar_color">Calendar color</label>
+                        <input type="color" class="form-control" list="presets" name="calendar_color">
+                        <datalist id="presets">
+                            @foreach($data['colors'] as $color)
+                                <option value="{{ $color }}">{{ $color }}</option>
+                            @endforeach
+                        </datalist>
+                    </div>
                     {{--Google Calendar id--}}
                     <div class="form-group">
                         <label for="google_calendar_id">Google Calendar Id</label>
