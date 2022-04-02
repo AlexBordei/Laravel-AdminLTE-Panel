@@ -17,6 +17,14 @@ class StudentController extends Controller
     public function index()
     {
         $students = Student::all();
+
+        foreach ($students as $key => $student) {
+            $phones = array_filter([$student->phone, $student->phone2], function($e) {
+                return !empty($e);
+            });
+
+            $students[$key]->phones = implode('/', $phones);
+        }
         return $this->buildResponse('student.list', $students);
     }
 
@@ -41,7 +49,8 @@ class StudentController extends Controller
         $validated = $request->validate([
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
-            'phone' => 'required|max:255',
+            'phone' => 'required_without:phone2|max:255',
+            'phone2' => 'required_without:phone|max:255',
             'email' => 'required|email|max:255',
         ]);
 
@@ -49,9 +58,10 @@ class StudentController extends Controller
         $data = [
             'first_name' => $request->get('first_name'),
             'last_name' => $request->get('last_name'),
-            'phone' => $request->get('phone'),
             'email' => $request->get('email'),
-            ];
+            'phone' => $request->get('phone'),
+            'phone2' => $request->get('phone2'),
+        ];
 
         if(!empty($request->get('birth_date'))) {
             $date = Carbon::createFromFormat('d/m/Y', $request->get('birth_date'));
@@ -85,6 +95,7 @@ class StudentController extends Controller
             $date = strtotime($student->birth_date);
             $student->birth_date = Date('d/m/Y', $date);
         }
+
         return $this->buildResponse('student.edit', $student);
     }
 
@@ -100,19 +111,25 @@ class StudentController extends Controller
         $validated = $request->validate([
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
-            'phone' => 'required|max:255',
+            'phone' => 'required_without:phone2|max:255',
+            'phone2' => 'required_without:phone|max:255',
             'email' => 'required|email|max:255',
-            'birth_date' => 'required|date_format:d/m/Y',
         ]);
-        $date = Carbon::createFromFormat('d/m/Y', $request->get('birth_date'));
 
-        $student->fill([
+        $data = [
             'first_name' => $request->get('first_name'),
             'last_name' => $request->get('last_name'),
-            'phone' => $request->get('phone'),
             'email' => $request->get('email'),
-            'birth_date' => $date->format('Y-m-d'),
-        ])->save();
+            'phone' => $request->get('phone'),
+            'phone2' => $request->get('phone2'),
+        ];
+
+        if(!empty($request->get('birth_date'))) {
+            $date = Carbon::createFromFormat('d/m/Y', $request->get('birth_date'));
+            $data['birth_date'] = $date->format('Y-m-d');
+        }
+
+        $student->fill($data)->save();
 
         return back()->with('success', 'Student successfully updated!');
     }
@@ -125,7 +142,6 @@ class StudentController extends Controller
      */
     public function destroy(Student $student)
     {
-
         try {
             $student->deleteOrFail();
             return redirect()

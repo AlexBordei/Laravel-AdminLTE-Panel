@@ -16,6 +16,7 @@
                         <x-forms.input label="First name" value="{{ $data->first_name }}"/>
                         <x-forms.input label="Last name" value="{{ $data->last_name }}"/>
                         <x-forms.input label="Phone" value="{{ $data->phone }}"/>
+                        <x-forms.input label="Phone2" value="{{ $data->phone2 }}"/>
                         <x-forms.input.email label="Email" value="{{ $data->email }}"/>
                         <x-forms.input.calendar label="Birth date" value="{{ $data->birth_date }}"/>
                     </div>

@@ -15,6 +15,7 @@
                     <x-forms.input label="First name"/>
                     <x-forms.input label="Last name"/>
                     <x-forms.input label="Phone"/>
+                    <x-forms.input label="Phone2"/>
                     <x-forms.input.email label="Email"/>
                     <x-forms.input.calendar label="Birth date"/>
                 </div>

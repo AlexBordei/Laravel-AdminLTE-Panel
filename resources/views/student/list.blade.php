@@ -17,7 +17,7 @@
                             <th>ID</th>
                             <th>First name</th>
                             <th>Last name</th>
-                            <th>Phone</th>
+                            <th>Phones</th>
                             <th>Email</th>
                             <th>Birth date</th>
                             <th>Actions</th>
@@ -29,7 +29,7 @@
                             <td>{{ $elem->id }}</td>
                             <td>{{ $elem->first_name }}</td>
                             <td>{{ $elem->last_name }}</td>
-                            <td>{{ $elem->phone }}</td>
+                            <td>{{ $elem->phones }}</td>
                             <td>{{ $elem->email }}</td>
                             <td>{{ !empty($elem->birth_date) ? (new Carbon\Carbon($elem->birth_date))->format('d-m-Y') : '' }}</td>
                             <td>
