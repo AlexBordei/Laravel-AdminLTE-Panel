@@ -55,8 +55,6 @@ class TeacherController extends Controller
      */
     public function store(StoreTeacherRequest $request)
     {
-
-
         $validated = $request->validate([
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
@@ -151,7 +149,7 @@ class TeacherController extends Controller
 
         ])->save();
 
-        return back()->with('success', 'Teacher successfully updated!');
+        return redirect('/teacher')->with('success', 'Teacher successfully updated!');
     }
 
     /**

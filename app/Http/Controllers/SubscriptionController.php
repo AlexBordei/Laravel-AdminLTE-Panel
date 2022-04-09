@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateSubscriptionRequest;
+use App\Models\Band;
+use App\Models\BandStudent;
 use App\Models\Event;
 use App\Models\Instrument;
 use App\Models\Payment;
