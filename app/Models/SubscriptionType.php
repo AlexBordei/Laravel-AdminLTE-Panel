@@ -15,6 +15,7 @@ class SubscriptionType extends Model
         'sessions_per_week',
         'price',
         'duration',
+        'is_band',
         'instruments_number',
         'students_number',
 

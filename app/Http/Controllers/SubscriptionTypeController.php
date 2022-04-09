@@ -49,8 +49,13 @@ class SubscriptionTypeController extends Controller
             'students_number' => 'required|numeric',
             'sessions_per_week' => 'required|numeric|lt:sessions_number',
         ]);
+        $data = $request->all();
 
-        SubscriptionType::create($request->all());
+        if(!empty($data['is_band']) && $data['is_band'] === 'on') {
+            $data['is_band'] = true;
+        }
+
+        SubscriptionType::create($data);
 
         return redirect('/subscription_type')->with('success', 'Subscription type has been added successfully!');
     }
@@ -95,7 +100,15 @@ class SubscriptionTypeController extends Controller
             'sessions_per_week' => 'required|numeric|lt:sessions_number',
         ]);
 
-        $subscriptionType->fill($request->all())->save();
+        $data = $request->all();
+
+        if(!empty($data['is_band']) && $data['is_band'] === 'on') {
+            $data['is_band'] = true;
+        } else {
+            $data['is_band'] = false;
+        }
+
+        $subscriptionType->fill($data)->save();
 
         return redirect()->route('subscription_type.index')->with('success', 'Subscription type successfully updated!');
     }

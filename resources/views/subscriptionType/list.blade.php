@@ -22,6 +22,7 @@
                             <th>Duration</th>
                             <th>Number of instruments</th>
                             <th>Number of students</th>
+                            <th>Is a band subscription?</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -36,6 +37,7 @@
                             <td>{{ $elem->duration }}</td>
                             <td>{{ $elem->instruments_number }}</td>
                             <td>{{ $elem->students_number }}</td>
+                            <td>{{ $elem->is_band }}</td>
                             <td>
                                 <a href="{{ url('/subscription_type/' . $elem->id . '/edit') }}"><button class="btn btn-secondary btn-flat">Edit</button></a>
                                 <form action="{{ url('/subscription_type', ['id' => $elem->id]) }}" method="post" style="display: inline-block">

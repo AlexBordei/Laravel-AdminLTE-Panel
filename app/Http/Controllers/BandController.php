@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Band;
-use App\Models\Instrument;
-use App\Models\Room;
-use App\Models\Student;
 use App\Models\Subscription;
 use App\Models\SubscriptionType;
 use Illuminate\Http\Request;
@@ -32,7 +29,7 @@ class BandController extends Controller
      */
     public function create()
     {
-        $band_subscriptions = Subscription::where(['subscription_type_id' => SubscriptionType::where('name', 'Band')->first('id')->id, 'status' => 'active'])->with('student')->get('student_id');
+        $band_subscriptions = Subscription::where(['subscription_type_id' => SubscriptionType::where('is_band', true)->first('id')->id, 'status' => 'active'])->with('student')->get('student_id');
         $students = [];
         foreach ($band_subscriptions as $band_subscription) {
             $students[] = [
@@ -91,7 +88,7 @@ class BandController extends Controller
      */
     public function edit(Band $band)
     {
-        $band_subscriptions = Subscription::where(['subscription_type_id' => SubscriptionType::where('name', 'Band')->first('id')->id, 'status' => 'active'])->with('student')->get('student_id');;
+        $band_subscriptions = Subscription::where(['subscription_type_id' => SubscriptionType::where('is_band', true)->first('id')->id, 'status' => 'active'])->with('student')->get('student_id');;
         $selected_data = [];
 
         foreach ($band->students as $selected_student) {

@@ -21,7 +21,7 @@
                                     'components.forms.checkbox',
                                     [
                                         'data' => $data['students'],
-                                        'label' => 'Students',
+                                        'label' => 'Available students',
                                         'name'=> 'students'
                                     ]
                                 )

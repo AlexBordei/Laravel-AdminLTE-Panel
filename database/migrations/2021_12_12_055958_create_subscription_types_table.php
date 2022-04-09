@@ -20,6 +20,7 @@ class CreateSubscriptionTypesTable extends Migration
             $table->integer('sessions_number');
             $table->integer('sessions_per_week')->default(1);
             $table->integer('duration');
+            $table->boolean('is_band')->default(false);
             $table->integer('instruments_number');
             $table->integer('students_number');
             $table->timestamps();

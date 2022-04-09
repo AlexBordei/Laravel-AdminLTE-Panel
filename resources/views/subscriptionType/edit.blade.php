@@ -41,6 +41,10 @@
                             <label for="students_number">Number of students</label>
                             <input type="number" value="{{ $data->students_number }}"  name="students_number" class="form-control" placeholder="Number of students">
                         </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="is_band" {{ $data->is_band ? 'checked' : '' }}>
+                            <label class="form-check-label" for="is_band">Is a band subscription?</label>
+                        </div>
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">Update</button>
