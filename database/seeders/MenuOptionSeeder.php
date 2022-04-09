@@ -54,6 +54,27 @@ class MenuOptionSeeder extends Seeder
             $menuOption->save();
 
             $parentMenuOption = new MenuOptions();
+            $parentMenuOption->title = 'Bands';
+            $parentMenuOption->url = '/band';
+            $parentMenuOption->icon = 'fa-tachometer-alt';
+            $parentMenuOption->menu_id = $menu->id;
+            $parentMenuOption->save();
+
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'Create new band';
+            $menuOption->url = '/band/create';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
+
+            $menuOption = new MenuOptions();
+            $menuOption->title = 'List all bands';
+            $menuOption->url = '/band';
+            $menuOption->icon = 'fa-circle';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
+
+            $parentMenuOption = new MenuOptions();
             $parentMenuOption->title = 'Teachers';
             $parentMenuOption->url = '/teacher';
             $parentMenuOption->icon = 'fa-tachometer-alt';
@@ -213,6 +234,7 @@ class MenuOptionSeeder extends Seeder
             $menuOption->icon = 'fa-circle';
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
+
 
         }
     }

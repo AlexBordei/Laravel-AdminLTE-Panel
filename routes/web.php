@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AppController;
+use App\Http\Controllers\BandController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GeneralModelsController;
@@ -34,6 +35,7 @@ Route::get('/dashboard', [AppController::class, 'dashboard'])->middleware(['auth
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('/student', StudentController::class);
+    Route::resource('/band', BandController::class);
     Route::resource('/teacher', TeacherController::class);
     Route::resource('/room', RoomController::class);
     Route::resource('/instrument', InstrumentController::class);
