@@ -21,7 +21,7 @@
                         <x-forms.input.calendar label="Birth date" value="{{ $data->birth_date }}"/>
                         <div class="form-group">
                             <label for="details">Details</label>
-                            <textarea name="details" id="details" cols="30" rows="30">{{ $data->details }}</textarea>
+                            <textarea name="details" id="details" class="form-control" cols="10" rows="10">{{ $data->details }}</textarea>
                         </div>
                     </div>
                     <div class="card-footer">

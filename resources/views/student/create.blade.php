@@ -20,7 +20,7 @@
                     <x-forms.input.calendar label="Birth date"/>
                     <div class="form-group">
                         <label for="details">Details</label>
-                        <textarea name="details" id="details" cols="100" rows="15"></textarea>
+                        <textarea name="details" class="form-control" id="details" cols="10" rows="10"></textarea>
                     </div>
                 </div>
                 <div class="card-footer">
