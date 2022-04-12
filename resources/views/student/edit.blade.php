@@ -19,6 +19,10 @@
                         <x-forms.input label="Phone2" value="{{ $data->phone2 }}"/>
                         <x-forms.input.email label="Email" value="{{ $data->email }}"/>
                         <x-forms.input.calendar label="Birth date" value="{{ $data->birth_date }}"/>
+                        <div class="form-group">
+                            <label for="details">Details</label>
+                            <textarea name="details" id="details" cols="30" rows="30">{{ $data->details }}</textarea>
+                        </div>
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">Update</button>

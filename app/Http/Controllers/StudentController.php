@@ -54,14 +54,7 @@ class StudentController extends Controller
             'email' => 'required|email|max:255',
         ]);
 
-
-        $data = [
-            'first_name' => $request->get('first_name'),
-            'last_name' => $request->get('last_name'),
-            'email' => $request->get('email'),
-            'phone' => $request->get('phone'),
-            'phone2' => $request->get('phone2'),
-        ];
+        $data = $request->all();
 
         if(!empty($request->get('birth_date'))) {
             $date = Carbon::createFromFormat('d/m/Y', $request->get('birth_date'));
@@ -116,13 +109,7 @@ class StudentController extends Controller
             'email' => 'required|email|max:255',
         ]);
 
-        $data = [
-            'first_name' => $request->get('first_name'),
-            'last_name' => $request->get('last_name'),
-            'email' => $request->get('email'),
-            'phone' => $request->get('phone'),
-            'phone2' => $request->get('phone2'),
-        ];
+        $data = $request->all();
 
         if(!empty($request->get('birth_date'))) {
             $date = Carbon::createFromFormat('d/m/Y', $request->get('birth_date'));
