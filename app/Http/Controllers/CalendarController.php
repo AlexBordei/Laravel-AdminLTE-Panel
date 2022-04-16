@@ -13,6 +13,8 @@ class CalendarController extends Controller
 {
     public function index()
     {
+        $teachers = Teacher::all();
+        $students = Student::all();
         $pending_events = Event::whereIn('status', ['pending'])->get();
         $scheduled_events = Event::whereIn('status', ['scheduled', 'confirmed'])->get();
         $reservations = Reservation::all();
@@ -36,9 +38,10 @@ class CalendarController extends Controller
             $reservations[$key]->student = $student;
             $reservations[$key]->teacher = $teacher;
         }
+
         return $this->buildResponse('calendar.list', [
             'events' => ['pending' => $pending_events, 'scheduled' => $scheduled_events],
-            'reservations' => $reservations
+            'reservations' => $reservations, 'teachers' => $teachers, 'students' => $students
         ]);
     }
 }
