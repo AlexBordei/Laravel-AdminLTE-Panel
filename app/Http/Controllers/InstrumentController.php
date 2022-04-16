@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreInstrumentRequest;
 use App\Http\Requests\UpdateInstrumentRequest;
 use App\Models\Instrument;
+use Illuminate\Database\QueryException;
 
 class InstrumentController extends Controller
 {
@@ -102,10 +103,10 @@ class InstrumentController extends Controller
             return redirect()
                 ->back()
                 ->with('success', 'Instrument deleted successfully!');
-        } catch (\Exception $e) {
+        } catch (QueryException $e) {
             return redirect()
                 ->back()
-                ->withErrors(['msg' => 'There was an error deleting the instrument!']);
+                ->withErrors(['msg' => ["There was an error deleting the instrument", json_encode($e->errorInfo)]]);
         }
     }
 }
