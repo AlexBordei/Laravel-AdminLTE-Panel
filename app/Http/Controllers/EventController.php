@@ -348,7 +348,6 @@ class EventController extends Controller
             if(isset($_POST['timeslot_reservations']) && $_POST['timeslot_reservations'] === 'yes') {
                 for($i = $weeks_number; $i < $weeks_number + 24; $i++) {
                     $reservation = new Reservation();
-                    $subscription = Subscription::where('id', $event->subscription_id)->first();
                     $starting_date = \DateTime::createFromFormat('d-m-Y H:i', $_POST['starting']);
                     $ending_date = \DateTime::createFromFormat('d-m-Y H:i', $_POST['starting']);
                     $ending_date->modify('+60 minutes');
@@ -359,8 +358,9 @@ class EventController extends Controller
                     $reservation->status = 'scheduled';
                     $reservation->starting = $starting_date;
                     $reservation->ending = $ending_date;
-                    $reservation->student_id = $subscription->student_id;
-                    $reservation->teacher_id = $subscription->teacher_id;
+                    $reservation->student_id = $event->subscription->student_id;
+                    $reservation->teacher_id = $event->subscription->teacher_id;
+                    $reservation->room_id = $event->subscription->room_id;
                     $reservation->save();
 
                     $g_event_response = $this->create_google_event($reservation, true);
