@@ -29,7 +29,9 @@ class BandController extends Controller
      */
     public function create()
     {
-        $band_subscriptions = Subscription::where(['subscription_type_id' => SubscriptionType::where('is_band', true)->first('id')->id, 'status' => 'active'])->with('student')->get('student_id');
+        $band_subcription_type_ids = SubscriptionType::where('is_band', true)->get('id');
+
+        $band_subscriptions = Subscription::whereIn('subscription_type_id', $band_subcription_type_ids)->where('status', 'active')->with('student')->get('student_id');
         $students = [];
         foreach ($band_subscriptions as $band_subscription) {
             $students[] = [
