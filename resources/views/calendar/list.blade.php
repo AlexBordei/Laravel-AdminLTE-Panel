@@ -68,43 +68,71 @@
                                     There are no events to be scheduled
                             @endif
                         </div>
-                        <div id="scheduled-events">
-                            @if(count($data['events']['scheduled']) > 0)
-                                @foreach($data['events']['scheduled'] as $event)
-                                        <div class="scheduled-event"
-                                             data-event="{{$event->id}}"
-                                             data-subscription="{{$event->subscription->id}}"
-                                             data-student="{{$event->subscription->student->first_name}} {{$event->subscription->student->last_name}}"
-                                             data-teacher="{{$event->subscription->teacher->first_name}} {{$event->subscription->teacher->last_name}}"
-                                             data-instrument="{{$event->subscription->instrument->name}}"
-                                             data-room="{{$event->subscription->room->name}}"
-                                             data-room_id="{{$event->subscription->room->id}}"
-                                             data-starting="{{$event->starting->format('Y-m-d\TH:i:00')}}"
-                                             data-ending="{{$event->ending->format('Y-m-d\TH:i:00')}}"
-                                             data-teacher_id="{{$event->subscription->teacher->id}}"
-                                             data-color="{{!empty($event->subscription->teacher->calendar_color) ? $event->subscription->teacher->calendar_color : '#007bff'}}"
-                                             data-edit='<a href="/event/{{$event->id}}/edit">Click here to edit</a>'
-                                        ></div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Reservations</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- the events -->
+                        <div id="reservations">
+                            @if(count($data['grouped_reservations']) > 0)
+                                <label for="reservation_student">Student</label>
+                                <select name="reservation" id="reservation_student">
+                                    <option value="">Select student...</option>
+                                @foreach($data['grouped_reservations'] as $key => $grouped_reservation)
+                                    <option value="{{$key}}" data-student_id="{{$grouped_reservation['student_id']}}">{{$grouped_reservation['first_name']}} {{$grouped_reservation['last_name']}}</option>
                                 @endforeach
+                                </select>
+                                <div id="reserved-events">
+
+                                </div>
+                            <script>
+                              var grouped_reservations = {!! json_encode(json_encode($data['grouped_reservations']), JSON_HEX_TAG) !!};
+                            </script>
+                            @else
+                                There are no reservations in calendar
                             @endif
-                                @if(count($data['reservations']) > 0)
-                                    @foreach($data['reservations'] as $reservation)
-                                        @if($reservation->status === 'scheduled')
-                                            <div class="scheduled-event"
-                                                 data-type="reservation"
-                                                 data-student="{{$reservation->student->first_name}} {{$reservation->student->last_name}}"
-                                                 data-teacher="{{$reservation->teacher->first_name}} {{$reservation->teacher->last_name}}"
-                                                 data-starting="{{$reservation->starting->format('Y-m-d\TH:i:00')}}"
-                                                 data-teacher_id="{{$event->subscription->teacher->id}}"
-                                                 data-room_id="{{$event->subscription->room->id}}"
-                                                 data-ending="{{$reservation->ending->format('Y-m-d\TH:i:00')}}"
-                                            ></div>
-                                        @endif
-                                    @endforeach
-                                @endif
                         </div>
                     </div>
                     <!-- /.card-body -->
+                </div>
+                <div id="scheduled-events">
+                    @if(count($data['events']['scheduled']) > 0)
+                        @foreach($data['events']['scheduled'] as $event)
+                            <div class="scheduled-event"
+                                 data-event="{{$event->id}}"
+                                 data-subscription="{{$event->subscription->id}}"
+                                 data-student="{{$event->subscription->student->first_name}} {{$event->subscription->student->last_name}}"
+                                 data-teacher="{{$event->subscription->teacher->first_name}} {{$event->subscription->teacher->last_name}}"
+                                 data-instrument="{{$event->subscription->instrument->name}}"
+                                 data-room="{{$event->subscription->room->name}}"
+                                 data-room_id="{{$event->subscription->room->id}}"
+                                 data-starting="{{$event->starting->format('Y-m-d\TH:i:00')}}"
+                                 data-ending="{{$event->ending->format('Y-m-d\TH:i:00')}}"
+                                 data-teacher_id="{{$event->subscription->teacher->id}}"
+                                 data-color="{{!empty($event->subscription->teacher->calendar_color) ? $event->subscription->teacher->calendar_color : '#007bff'}}"
+                                 data-edit='<a href="/event/{{$event->id}}/edit">Click here to edit</a>'
+                            ></div>
+                        @endforeach
+                    @endif
+                    @if(count($data['reservations']) > 0)
+                        @foreach($data['reservations'] as $reservation)
+                            @if($reservation->status === 'scheduled')
+                                <div class="scheduled-event"
+                                     data-type="reservation"
+                                     data-student="{{$reservation->student->first_name}} {{$reservation->student->last_name}}"
+                                     data-teacher="{{$reservation->teacher->first_name}} {{$reservation->teacher->last_name}}"
+                                     data-starting="{{$reservation->starting->format('Y-m-d\TH:i:00')}}"
+                                     data-teacher_id="{{$event->subscription->teacher->id}}"
+                                     data-room_id="{{$event->subscription->room->id}}"
+                                     data-ending="{{$reservation->ending->format('Y-m-d\TH:i:00')}}"
+                                ></div>
+                            @endif
+                        @endforeach
+                    @endif
                 </div>
                 <!-- /.card -->
             </div>

@@ -7,6 +7,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\GeneralModelsController;
 use App\Http\Controllers\InstrumentController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\SmsTemplateController;
@@ -40,6 +41,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/room', RoomController::class);
     Route::resource('/instrument', InstrumentController::class);
     Route::resource('/event', EventController::class);
+    Route::resource('/reservation', ReservationController::class);
+    Route::post('/reservation/delete_all', [ReservationController::class, 'deleteAllReservations']);
     Route::post('/calendar/schedule/{event}', [EventController::class, 'schedule']);
     Route::post('/calendar/update/{event}', [EventController::class, 'calendar_update']);
 

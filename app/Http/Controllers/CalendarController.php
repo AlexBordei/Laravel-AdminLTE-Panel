@@ -18,13 +18,13 @@ class CalendarController extends Controller
         $pending_events = Event::whereIn('status', ['pending'])->get();
         $scheduled_events = Event::whereIn('status', ['scheduled', 'confirmed'])->get();
         $reservations = Reservation::all();
+        $grouped_reservations = [];
 
         foreach ($pending_events as $key => $event) {
             $subscription = Subscription::where('id', $event->subscription->id)->with(['student', 'teacher', 'instrument', 'room'])->first();
 
             $pending_events[$key]->subscription = $subscription;
         }
-
 
         foreach ($scheduled_events as $key => $event) {
             $subscription = Subscription::where('id', $event->subscription->id)->with(['student', 'teacher', 'instrument', 'room'])->first();
@@ -39,13 +39,33 @@ class CalendarController extends Controller
             $reservations[$key]->teacher = $teacher;
         }
 
+        array_filter($reservations->toArray(), function($e) use (&$grouped_reservations){
+            $grouped_reservations['student_id_' . $e['student_id']] = array(
+                'student_id' => $e['student_id'],
+                'first_name' => $e['student']['first_name'],
+                'last_name' => $e['student']['last_name'],
+                'reservations' => [],
+            );
+        });
+
+        array_filter($reservations->toArray(), function($e) use (&$grouped_reservations){
+            unset($e['student']);
+
+            $grouped_reservations['student_id_' . $e['student_id']]['reservations'][] = $e;
+        });
+
         return $this->buildResponse('calendar.list', [
-            'events' => ['pending' => $pending_events, 'scheduled' => $scheduled_events],
-            'reservations' => $reservations, 'teachers' => $teachers, 'students' => $students
+            'events' => [
+                'pending' => $pending_events,
+                'scheduled' => $scheduled_events
+            ],
+            'reservations' => $reservations,
+            'teachers' => $teachers,
+            'students' => $students,
+            'grouped_reservations' => $grouped_reservations
         ]);
     }
 }
 
 //TODO: to not allow scheduling an event before or after the subscription range
-//TODO: each teacher will have his own calendar
 //TODO: when scheduling events a check for invinite events will make event go for 2 years, recurrent

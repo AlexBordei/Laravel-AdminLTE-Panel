@@ -5,6 +5,13 @@
 .select2-selection__arrow {
     top: 7px !important;
 }
+
 .select2-selection {
     height: 40px !important;
+}
+
+.external-event .remove_reservation {
+    color: red;
+    float: right;
+    cursor: pointer;
 }

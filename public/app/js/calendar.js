@@ -314,4 +314,62 @@ $(function () {
         calendar.addEventSource(events)
         calendar.render();
     });
+
+    $('#reservation_student').select2();
+    $('#reservation_student').on('change', function () {
+        $('#reserved-events').empty();
+        var data = JSON.parse(grouped_reservations);
+
+        if(data[$(this).val()]['reservations'] !== undefined) {
+            $('#reserved-events').append($('<button class="btn btn-danger btn-flat" onclick="delete_all_reservations(this)">Delete all reservations</button>'));
+            for(var i = 0; i < data[$(this).val()]['reservations'].length; i++) {
+                var date = new Date(data[$(this).val()]['reservations'][i]['starting']);
+                $('#reserved-events').append(
+                    $('<div class="external-event">' + data[$(this).val()]['reservations'][i]['id'] + ' - ' +
+                    date.toLocaleString() +
+                    '   <div class="remove_reservation">' +
+                    '       <span onclick="remove_reservation(this)">x</span>' +
+                    '       <form action="/reservation/' + data[$(this).val()]['reservations'][i]['id'] + '" method="post" style="display: none;">' +
+                    '          <input type="hidden" name="_method" value="delete">' +
+                    '          <input type="hidden" name="_token" value="' + $('meta[name="_calendar_token"]').attr('content') + '">' +
+                    '       </form>' +
+                    '   </div>' +
+                    '</div>'
+                ));
+            }
+        }
+    });
 });
+
+function remove_reservation(e) {
+    $(e).parent().find('form').submit();
+}
+
+function delete_all_reservations(e) {
+
+    let text = "Are you sure you want to delete all reservations for selected student?!\nYes or No.";
+    if (confirm(text) == true) {
+        var student_id = $('#reservation_student').find(':selected').data('student_id');
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="_calendar_token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            url: "/reservation/delete_all",
+            type: "POST",
+            dataType: "json",
+            data: {
+                'student_id' : student_id
+            },
+            success: function (data) {
+               location.reload();
+            },
+            error: function () {
+                alert("There was an error deleting all reservations");
+            }
+        });
+    }
+}
