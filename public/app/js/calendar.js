@@ -113,7 +113,7 @@ $(function () {
                     data: data,
                     success: function (data) {
                         info.draggedEl.parentNode.removeChild(info.draggedEl);
-                        // location.reload();
+                        location.reload();
                     },
                     error: function () {
                         info.revert();
