@@ -19,7 +19,7 @@
                             @foreach($parentOption->options as $subOption)
                                 <li class="nav-item">
                                     <a href="{{ $subOption->url }}" class="nav-link{{ $subOption->id === $activeOptions['child_id']? ' active' : '' }}">
-                                        <i class="far {{ $subOption->icon }} nav-icon"></i>
+                                        <i class="fa {{ $subOption->icon }} nav-icon"></i>
                                         <p>{{ $subOption->title }}</p>
                                     </a>
                                 </li>

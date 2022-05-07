@@ -40,9 +40,9 @@ class MenuOptionSeeder extends Seeder
             $parentMenuOption->save();
 
             $menuOption = new MenuOptions();
-            $menuOption->title = 'Create new student';
+            $menuOption->title = 'Add new student';
             $menuOption->url = '/student/create';
-            $menuOption->icon = 'fa-circle';
+            $menuOption->icon = 'fa-plus';
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
 
@@ -61,9 +61,9 @@ class MenuOptionSeeder extends Seeder
             $parentMenuOption->save();
 
             $menuOption = new MenuOptions();
-            $menuOption->title = 'Create new band';
+            $menuOption->title = 'Add new band';
             $menuOption->url = '/band/create';
-            $menuOption->icon = 'fa-circle';
+            $menuOption->icon = 'fa-plus';
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
 
@@ -82,9 +82,9 @@ class MenuOptionSeeder extends Seeder
             $parentMenuOption->save();
 
             $menuOption = new MenuOptions();
-            $menuOption->title = 'Create new teacher';
+            $menuOption->title = 'Add new teacher';
             $menuOption->url = '/teacher/create';
-            $menuOption->icon = 'fa-circle';
+            $menuOption->icon = 'fa-plus';
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
 
@@ -103,9 +103,9 @@ class MenuOptionSeeder extends Seeder
             $parentMenuOption->save();
 
             $menuOption = new MenuOptions();
-            $menuOption->title = 'Create new room';
+            $menuOption->title = 'Add new room';
             $menuOption->url = '/room/create';
-            $menuOption->icon = 'fa-circle';
+            $menuOption->icon = 'fa-plus';
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
 
@@ -124,9 +124,9 @@ class MenuOptionSeeder extends Seeder
             $parentMenuOption->save();
 
             $menuOption = new MenuOptions();
-            $menuOption->title = 'Create new instrument';
+            $menuOption->title = 'Add new instrument';
             $menuOption->url = '/instrument/create';
-            $menuOption->icon = 'fa-circle';
+            $menuOption->icon = 'fa-plus';
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
 
@@ -147,7 +147,7 @@ class MenuOptionSeeder extends Seeder
             $menuOption = new MenuOptions();
             $menuOption->title = 'Add new event';
             $menuOption->url = '/event/create';
-            $menuOption->icon = 'fa-circle';
+            $menuOption->icon = 'fa-plus';
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
 
@@ -173,6 +173,13 @@ class MenuOptionSeeder extends Seeder
             $parentMenuOption->save();
 
             $menuOption = new MenuOptions();
+            $menuOption->title = 'Add new';
+            $menuOption->url = '/subscription/create';
+            $menuOption->icon = 'fa-plus';
+            $menuOption->parent_id = $parentMenuOption->id;
+            $menuOption->save();
+
+            $menuOption = new MenuOptions();
             $menuOption->title = 'List all';
             $menuOption->url = '/subscription';
             $menuOption->icon = 'fa-circle';
@@ -196,7 +203,7 @@ class MenuOptionSeeder extends Seeder
             $menuOption = new MenuOptions();
             $menuOption->title = 'Create new payment';
             $menuOption->url = '/payment/create';
-            $menuOption->icon = 'fa-circle';
+            $menuOption->icon = 'fa-plus';
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
 
@@ -215,9 +222,9 @@ class MenuOptionSeeder extends Seeder
             $parentMenuOption->save();
 
             $menuOption = new MenuOptions();
-            $menuOption->title = 'Create new SMS';
+            $menuOption->title = 'Send a new SMS';
             $menuOption->url = '/sms/create';
-            $menuOption->icon = 'fa-circle';
+            $menuOption->icon = 'fa-plus';
             $menuOption->parent_id = $parentMenuOption->id;
             $menuOption->save();
 
