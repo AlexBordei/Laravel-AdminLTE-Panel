@@ -345,6 +345,42 @@ $(function () {
         update_events();
     });
 
+    //TBS
+    $('#teacher_tbs').select2();
+    $('#teacher_tbs').on('change', update_pending_events);
+
+    $('#student_tbs').select2();
+    $('#student_tbs').on('change', update_pending_events);
+
+    $('#room_tbs').select2();
+    $('#room_tbs').on('change', update_pending_events);
+
+    $('#instrument_tbs').select2();
+    $('#instrument_tbs').on('change', update_pending_events);
+
+    function update_pending_events() {
+        var teacher_id = $('#teacher_tbs').children(':selected').val();
+        var student_id = $('#student_tbs').children(':selected').val();
+        var room_id = $('#room_tbs').children(':selected').val();
+        var instrument_id = $('#instrument_tbs').children(':selected').val();
+
+        $('.external-event').show();
+        $('.external-event').each(function() {
+            update_external_event($(this), teacher_id.length > 0 && parseInt($(this).data('teacher_id')) !== parseInt(teacher_id));
+            update_external_event($(this), student_id.length > 0 && parseInt($(this).data('student_id')) !== parseInt(student_id));
+            update_external_event($(this), room_id.length > 0 && parseInt($(this).data('room_id')) !== parseInt(room_id));
+            update_external_event($(this), instrument_id.length > 0 && parseInt($(this).data('instrument_id')) !== parseInt(instrument_id));
+        });
+
+        function update_external_event(elem, hide) {
+            if($(elem).is(":visible")) {
+                if(hide === true) {
+                    $(elem).hide();
+                }
+            }
+        }
+    }
+
     function update_events() {
         var events = createEvents();
         calendar.removeAllEvents();

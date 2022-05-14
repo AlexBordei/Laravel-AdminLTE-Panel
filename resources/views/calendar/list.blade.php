@@ -24,6 +24,61 @@
             <div class="sticky-top mb-3">
                 <div class="card">
                     <div class="card-header">
+                        <h4 class="card-title">Filters</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                @if(isset($data['teachers']))
+                                    <label for="teacher_tbs">Teacher</label>
+                                    <select name="teacher_tbs" id="teacher_tbs">
+                                        <option value="">All</option>
+                                        @foreach($data['teachers'] as $teacher)
+                                            <option value="{{$teacher->id}}">{{$teacher->first_name}} {{$teacher->last_name}}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
+                            </div>
+                            <div class="col-md-6">
+                                @if(isset($data['students']))
+                                    <label for="student_tbs">Student</label>
+                                    <select name="student_tbs" id="student_tbs">
+                                        <option value="">All</option>
+                                        @foreach($data['students'] as $student)
+                                            <option value="{{$student->id}}">{{$student->first_name}} {{$student->last_name}}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                @if(isset($data['rooms']))
+                                    <label for="room_tbs">Room</label>
+                                    <select name="room_tbs" id="room_tbs">
+                                        <option value="">All</option>
+                                        @foreach($data['rooms'] as $room)
+                                            <option value="{{$room->id}}">{{$room->name}}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
+                            </div>
+                            <div class="col-md-6">
+                                @if(isset($data['instruments']))
+                                    <label for="instrument_tbs">Instrument</label>
+                                    <select name="instrument_tbs" id="instrument_tbs">
+                                        <option value="">All</option>
+                                        @foreach($data['instruments'] as $instrument)
+                                            <option value="{{$instrument->id}}">{{$instrument->name}}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
                         <h4 class="card-title">Events to be scheduled</h4>
                     </div>
                     <div class="card-body">
@@ -35,8 +90,11 @@
                                         data-event="{{$event->id}}"
                                         data-subscription="{{$event->subscription->id}}"
                                         data-student="{{$event->subscription->student->first_name}} {{$event->subscription->student->last_name}}"
+                                        data-student_id="{{$event->subscription->student->id}}"
                                         data-teacher="{{$event->subscription->teacher->first_name}} {{$event->subscription->teacher->last_name}}"
+                                        data-teacher_id="{{$event->subscription->teacher->id}}"
                                         data-instrument="{{$event->subscription->instrument->name}}"
+                                        data-instrument_id="{{$event->subscription->instrument->id}}"
                                         data-room="{{$event->subscription->room->name}}"
                                         data-room_id="{{$event->subscription->room->id}}"
                                         >
