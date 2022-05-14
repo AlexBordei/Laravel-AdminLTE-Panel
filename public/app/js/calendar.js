@@ -1,5 +1,8 @@
 $(function () {
     var teacher_id = 0;
+    var student_id = 0;
+    var room_id = 0;
+    var instrument_id = 0;
 
     /* initialize the external events
      -----------------------------------------------------------------*/
@@ -271,6 +274,18 @@ $(function () {
                 continue;
             }
 
+            if(student_id > 0 && student_id !== parseInt(elem.data('student_id'))) {
+                continue;
+            }
+
+            if(room_id > 0 && room_id !== parseInt(elem.data('room_id'))) {
+                continue;
+            }
+
+            if(instrument_id > 0 && instrument_id !== parseInt(elem.data('instrument_id'))) {
+                continue;
+            }
+
             var event = {
                 start: elem.data('starting'),
                 end: elem.data('ending'),
@@ -309,11 +324,33 @@ $(function () {
     $('#teacher').select2();
     $('#teacher').on('change', function() {
         teacher_id = parseInt($(this).children(':selected').val());
+        update_events();
+    });
+
+    $('#student').select2();
+    $('#student').on('change', function() {
+        student_id = parseInt($(this).children(':selected').val());
+        update_events();
+    });
+
+    $('#room').select2();
+    $('#room').on('change', function() {
+        room_id = parseInt($(this).children(':selected').val());
+        update_events();
+    });
+
+    $('#instrument').select2();
+    $('#instrument').on('change', function() {
+        instrument_id = parseInt($(this).children(':selected').val());
+        update_events();
+    });
+
+    function update_events() {
         var events = createEvents();
         calendar.removeAllEvents();
         calendar.addEventSource(events)
         calendar.render();
-    });
+    }
 
     $('#reservation_student').select2();
     $('#reservation_student').on('change', function () {

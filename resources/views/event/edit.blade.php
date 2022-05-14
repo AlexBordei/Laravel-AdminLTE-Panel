@@ -41,6 +41,9 @@
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">Update</button>
                     </div>
+                    @if($data['redirect_to_calendar'])
+                        <input type="hidden" name="redirect_to_calendar" value="{{$data['redirect_to_calendar']}}">
+                    @endif
                 </form>
             </div>
         </div>

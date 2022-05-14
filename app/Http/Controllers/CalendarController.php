@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\Instrument;
 use App\Models\Reservation;
+use App\Models\Room;
 use App\Models\Student;
 use App\Models\Subscription;
 use App\Models\Teacher;
-use Illuminate\Http\Request;
 
 class CalendarController extends Controller
 {
@@ -15,6 +16,9 @@ class CalendarController extends Controller
     {
         $teachers = Teacher::all();
         $students = Student::all();
+        $rooms = Room::all();
+        $instruments = Instrument::all();
+
         $pending_events = Event::whereIn('status', ['pending'])->get();
         $scheduled_events = Event::whereIn('status', ['scheduled', 'confirmed'])->get();
         $reservations = Reservation::all();
@@ -62,6 +66,8 @@ class CalendarController extends Controller
             'reservations' => $reservations,
             'teachers' => $teachers,
             'students' => $students,
+            'rooms' => $rooms,
+            'instruments' => $instruments,
             'grouped_reservations' => $grouped_reservations
         ]);
     }

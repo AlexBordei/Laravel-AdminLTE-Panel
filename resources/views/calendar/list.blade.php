@@ -18,27 +18,10 @@
     <!-- Page specific script -->
 @endsection
 
-
 @section('content')
     <div class="row">
         <div class="col-md-3">
             <div class="sticky-top mb-3">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Filters</h4>
-                    </div>
-                    <div class="card-body">
-                        @if(isset($data['teachers']))
-                            <label for="teacher">Teacher</label>
-                            <select name="teacher" id="teacher">
-                                <option value="">All</option>
-                            @foreach($data['teachers'] as $teacher)
-                                    <option value="{{$teacher->id}}">{{$teacher->first_name}} {{$teacher->last_name}}</option>
-                            @endforeach
-                            </select>
-                        @endif
-                    </div>
-                </div>
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Events to be scheduled</h4>
@@ -106,15 +89,17 @@
                                  data-event="{{$event->id}}"
                                  data-subscription="{{$event->subscription->id}}"
                                  data-student="{{$event->subscription->student->first_name}} {{$event->subscription->student->last_name}}"
+                                 data-student_id="{{$event->subscription->student->id}}"
                                  data-teacher="{{$event->subscription->teacher->first_name}} {{$event->subscription->teacher->last_name}}"
                                  data-instrument="{{$event->subscription->instrument->name}}"
+                                 data-instrument_id="{{$event->subscription->instrument->id}}"
                                  data-room="{{$event->subscription->room->name}}"
                                  data-room_id="{{$event->subscription->room->id}}"
                                  data-starting="{{$event->starting->format('Y-m-d\TH:i:00')}}"
                                  data-ending="{{$event->ending->format('Y-m-d\TH:i:00')}}"
                                  data-teacher_id="{{$event->subscription->teacher->id}}"
                                  data-color="{{!empty($event->subscription->teacher->calendar_color) ? $event->subscription->teacher->calendar_color : '#007bff'}}"
-                                 data-edit='<a href="/event/{{$event->id}}/edit">Click here to edit</a>'
+                                 data-edit='<a href="/event/{{$event->id}}/edit?redirect_calendar=yes">Click here to edit</a>'
                             ></div>
                         @endforeach
                     @endif
@@ -125,8 +110,10 @@
                                      data-type="reservation"
                                      data-student="{{$reservation->student->first_name}} {{$reservation->student->last_name}}"
                                      data-teacher="{{$reservation->teacher->first_name}} {{$reservation->teacher->last_name}}"
+                                     data-student_id="{{$event->subscription->student->id}}"
                                      data-starting="{{$reservation->starting->format('Y-m-d\TH:i:00')}}"
                                      data-teacher_id="{{$event->subscription->teacher->id}}"
+                                     data-instrument_id="{{$event->subscription->instrument->id}}"
                                      data-room_id="{{$event->subscription->room->id}}"
                                      data-ending="{{$reservation->ending->format('Y-m-d\TH:i:00')}}"
                                 ></div>
@@ -138,7 +125,67 @@
             </div>
         </div>
         <!-- /.col -->
+
         <div class="col-md-9">
+            <div class="card card-default">
+                <div class="card-header">Filters</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                @if(isset($data['teachers']))
+                                    <label for="teacher">Teacher</label>
+                                    <select name="teacher" id="teacher">
+                                        <option value="">All</option>
+                                        @foreach($data['teachers'] as $teacher)
+                                            <option value="{{$teacher->id}}">{{$teacher->first_name}} {{$teacher->last_name}}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                @if(isset($data['students']))
+                                    <label for="student">Student</label>
+                                    <select name="student" id="student">
+                                        <option value="">All</option>
+                                        @foreach($data['students'] as $student)
+                                            <option value="{{$student->id}}">{{$student->first_name}} {{$student->last_name}}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                @if(isset($data['rooms']))
+                                    <label for="room">Room</label>
+                                    <select name="room" id="room">
+                                        <option value="">All</option>
+                                        @foreach($data['rooms'] as $room)
+                                            <option value="{{$room->id}}">{{$room->name}}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                @if(isset($data['instruments']))
+                                    <label for="instrument">Instrument</label>
+                                    <select name="instrument" id="instrument">
+                                        <option value="">All</option>
+                                        @foreach($data['instruments'] as $instrument)
+                                            <option value="{{$instrument->id}}">{{$instrument->name}}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="card card-primary">
                 <div class="card-body p-0">
                     <!-- THE CALENDAR -->

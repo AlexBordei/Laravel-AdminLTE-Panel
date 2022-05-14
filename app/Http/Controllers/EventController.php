@@ -137,7 +137,8 @@ class EventController extends Controller
         return $this->buildResponse('event.edit', [
             'subscriptions' => $subscriptions,
             'statuses' => $statuses,
-            'event' => $event
+            'event' => $event,
+            'redirect_to_calendar' => isset($_GET['redirect_calendar']) && $_GET['redirect_calendar'] === 'yes'
         ]);
     }
 
@@ -178,7 +179,11 @@ class EventController extends Controller
             'subscription_id' => $request->get('subscription_id')
         ])->save();
 
-        return redirect()->route('event.index')->with('success', 'Event successfully updated!');
+        $route = 'event.index';
+        if($request->has('redirect_to_calendar')) {
+            $route = 'calendar.index';
+        }
+        return redirect()->route($route)->with('success', 'Event successfully updated!');
     }
 
     /**
