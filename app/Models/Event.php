@@ -10,7 +10,7 @@ class Event extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['subscription_id', 'starting', 'ending', 'status', 'google_event_id'];
+    protected $fillable = ['subscription_id', 'starting', 'ending', 'status', 'google_event_id', 'rescheduled'];
 
     protected $dates = ['starting', 'ending'];
 

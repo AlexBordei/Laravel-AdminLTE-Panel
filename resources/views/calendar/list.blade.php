@@ -94,6 +94,13 @@
                                         data-room="{{$event->subscription->room->name}}"
                                         data-room_id="{{$event->subscription->room->id}}"
                                         >
+                                            @if((bool)$event->rescheduled === true)
+                                                <div class="ribbon-wrapper ribbon-lg">
+                                                    <div class="ribbon bg-success">
+                                                        Rescheduled
+                                                    </div>
+                                                </div>
+                                            @endif
                                             {{$event->subscription->id}} -
                                             Student: {{$event->subscription->student->first_name}} {{$event->subscription->student->last_name}}<br>
                                             Teacher: {{$event->subscription->teacher->first_name}} {{$event->subscription->teacher->last_name}}<br>

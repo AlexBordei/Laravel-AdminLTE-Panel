@@ -156,12 +156,18 @@ class EventController extends Controller
             'status' => 'required|in:pending,scheduled,confirmed,canceled',
         ]);
 
+        $old_status = $event->status;
         $event->status = $request->get('status');
 
         $delete_event_status = false;
         $update_event_status = false;
 
-        if(in_array($request->get('status'), ['pending', 'canceled'])) {
+        if(in_array($event->status, ['pending', 'canceled'])) {
+
+            if($old_status === 'scheduled' && $event->status === 'pending') {
+                $event->rescheduled = true;
+            }
+
             $g_event_response = $this->delete_google_event($event);
             $delete_event_status = $g_event_response;
         } else {

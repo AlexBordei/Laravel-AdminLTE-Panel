@@ -308,7 +308,6 @@ $(function () {
                         'event': elem.data('event'),
                         'student': elem.data('student'),
                         'teacher': elem.data('teacher'),
-                        'teacher': elem.data('teacher'),
                         'room': elem.data('room'),
                         'room_id': elem.data('room_id'),
                         'instrument': elem.data('instrument'),
@@ -359,7 +358,7 @@ $(function () {
 
     $('#instrument_tbs').select2();
     $('#instrument_tbs').on('change', update_pending_events);
-    $('.external-event').hide();
+    // $('.external-event').hide();
     function update_pending_events() {
         var teacher_id = $('#teacher_tbs').children(':selected').val();
         var student_id = $('#student_tbs').children(':selected').val();
