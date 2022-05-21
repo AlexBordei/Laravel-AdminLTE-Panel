@@ -27,8 +27,7 @@
                         <h4 class="card-title">Filters</h4>
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
+                        <div class="form-group">
                                 @if(isset($data['teachers']))
                                     <label for="teacher_tbs">Teacher</label>
                                     <select name="teacher_tbs" id="teacher_tbs">
@@ -38,8 +37,8 @@
                                         @endforeach
                                     </select>
                                 @endif
-                            </div>
-                            <div class="col-md-6">
+                        </div>
+                        <div class="form-group">
                                 @if(isset($data['students']))
                                     <label for="student_tbs">Student</label>
                                     <select name="student_tbs" id="student_tbs">
@@ -49,10 +48,8 @@
                                         @endforeach
                                     </select>
                                 @endif
-                            </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
+                        <div class="form-group">
                                 @if(isset($data['rooms']))
                                     <label for="room_tbs">Room</label>
                                     <select name="room_tbs" id="room_tbs">
@@ -62,8 +59,8 @@
                                         @endforeach
                                     </select>
                                 @endif
-                            </div>
-                            <div class="col-md-6">
+                        </div>
+                        <div class="form-group">
                                 @if(isset($data['instruments']))
                                     <label for="instrument_tbs">Instrument</label>
                                     <select name="instrument_tbs" id="instrument_tbs">
@@ -73,7 +70,6 @@
                                         @endforeach
                                     </select>
                                 @endif
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -119,7 +115,7 @@
                     <div class="card-body">
                         <!-- the events -->
                         <div id="reservations">
-                            @if(count($data['grouped_reservations']) > 0)
+                            @if(isset($data['grouped_reservations']) && count($data['grouped_reservations']) > 0)
                                 <label for="reservation_student">Student</label>
                                 <select name="reservation" id="reservation_student">
                                     <option value="">Select student...</option>

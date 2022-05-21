@@ -66,6 +66,7 @@ $(function () {
             center: 'title',
             right : 'dayGridMonth,timeGridWeek,timeGridDay'
         },
+        firstDay: 1,
         themeSystem: 'bootstrap',
         //Random default events
         events: events,
@@ -185,6 +186,7 @@ $(function () {
             // change the border color just for fun
             info.el.style.borderColor = 'red';
         },
+
         eventMouseLeave: function(info) {
             info.el.style.borderColor = 'white';
         },
@@ -357,7 +359,7 @@ $(function () {
 
     $('#instrument_tbs').select2();
     $('#instrument_tbs').on('change', update_pending_events);
-
+    $('.external-event').hide();
     function update_pending_events() {
         var teacher_id = $('#teacher_tbs').children(':selected').val();
         var student_id = $('#student_tbs').children(':selected').val();
