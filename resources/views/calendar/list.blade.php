@@ -305,4 +305,43 @@
         </div>
         <!-- /.col -->
     </div>
+    <!-- Spinner Modal -->
+    <div class="modal fade" id="spinnerModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="spinnerModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="spinnerModalLabel">Scheduling in progres...</h5>
+                    <p>Please wait!</p>
+                </div>
+                <div class="modal-body">
+                    <div style="margin-left: auto; margin-right: auto; display: block; width: 288px;">
+                        <div class="spinner-grow text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-secondary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-success" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-danger" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-warning" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-info" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-warning" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-dark" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection

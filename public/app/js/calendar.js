@@ -109,7 +109,7 @@ $(function () {
                         data['timeslot_reservations'] = 'yes';
                     }
                 }
-
+                $('#spinnerModal').modal('toggle');
                 $.ajax({
                     url: "/calendar/schedule/" + draggedEl.data('event'),
                     type: "POST",
@@ -120,6 +120,7 @@ $(function () {
                         location.reload();
                     },
                     error: function () {
+                        $('#spinnerModal').modal('toggle');
                         info.revert();
                     }
                 });
@@ -147,6 +148,7 @@ $(function () {
                         'X-CSRF-TOKEN': $('meta[name="_calendar_token"]').attr('content')
                     }
                 });
+                $('#spinnerModal').modal('toggle');
                 $.ajax({
                     url: "/calendar/update/" + info.event.extendedProps.event,
                     type: "POST",
@@ -155,9 +157,9 @@ $(function () {
                         'starting': starting_date
                     },
                     success: function (data) {
-                        //TODO: add a success info notice
-                    },
+                        $('#spinnerModal').modal('toggle');                    },
                     error: function () {
+                        $('#spinnerModal').modal('toggle');
                         info.revert();
                     }
                 });
@@ -413,6 +415,7 @@ $(function () {
             }
         }
     });
+
 });
 
 function remove_reservation(e) {
@@ -431,6 +434,7 @@ function delete_all_reservations(e) {
             }
         });
 
+        $('#spinnerModal').modal('toggle');
         $.ajax({
             url: "/reservation/delete_all",
             type: "POST",
@@ -443,6 +447,7 @@ function delete_all_reservations(e) {
             },
             error: function () {
                 alert("There was an error deleting all reservations");
+                $('#spinnerModal').modal('toggle');
             }
         });
     }
