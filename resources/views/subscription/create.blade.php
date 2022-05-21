@@ -102,7 +102,14 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="comment">Comment</label>
+                                        <textarea name="comment" id="comment" cols="30" rows="10" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">Create</button>

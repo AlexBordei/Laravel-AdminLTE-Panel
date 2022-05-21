@@ -23,6 +23,7 @@
                                 <th>Starting</th>
                                 <th>Ending</th>
                                 <th>Payment</th>
+                                <th>Comment</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -39,6 +40,7 @@
                                     <td>{{ !empty($elem->starting) ? (new Carbon\Carbon($elem->starting))->format('d/m/Y') : '' }}</td>
                                     <td>{{ !empty($elem->ending) ? (new Carbon\Carbon($elem->ending))->format('d/m/Y') : '' }}</td>
                                     <td><a href="/payment/{{ $elem->payment_id }}/edit">{{ $elem->payment_id }}</a></td>
+                                    <td>{{ $elem->comment }}</td>
                                     <td>
                                         @switch($elem->status)
                                             @case('canceled')

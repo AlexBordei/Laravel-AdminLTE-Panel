@@ -18,7 +18,8 @@ class Subscription extends Model
         'starting',
         'ending',
         'payment_id',
-        'status'
+        'status',
+        'comment'
     ];
 
     protected $dates = ['starting', 'ending'];

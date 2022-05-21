@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateSubscriptionRequest;
-use App\Models\Band;
 use App\Models\BandStudent;
 use App\Models\Event;
 use App\Models\Instrument;
@@ -86,6 +85,7 @@ class SubscriptionController extends Controller
                  'status' => $request->get('status'),
                  'starting' => $starting_date->format('Y-m-d'),
                  'ending' => $ending_date->format('Y-m-d'),
+                 'comment' => $request->get('comment')
              ]
          );
 
@@ -172,6 +172,7 @@ class SubscriptionController extends Controller
                 'ending' => $ending_date->format('Y-m-d'),
                 'payment_id' => $request->payment_id,
                 'status' => $request->status,
+                'comment' => $request->get('comment')
             ]
         )->save();
 
