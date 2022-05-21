@@ -182,7 +182,8 @@ class EventController extends Controller
         }
 
         $event->fill([
-            'subscription_id' => $request->get('subscription_id')
+            'subscription_id' => $request->get('subscription_id'),
+            'comment' => $request->get('comment')
         ])->save();
 
         $route = 'event.index';

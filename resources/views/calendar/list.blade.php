@@ -93,6 +93,8 @@
                                         data-instrument_id="{{$event->subscription->instrument->id}}"
                                         data-room="{{$event->subscription->room->name}}"
                                         data-room_id="{{$event->subscription->room->id}}"
+                                        onmouseover="show_extra(this)"
+                                        onmouseout="hide_extra(this)"
                                         >
                                             @if((bool)$event->rescheduled === true)
                                                 <div class="ribbon-wrapper ribbon-lg">
@@ -106,6 +108,11 @@
                                             Teacher: {{$event->subscription->teacher->first_name}} {{$event->subscription->teacher->last_name}}<br>
                                             Instrument: {{$event->subscription->instrument->name}}<br>
                                             Room: {{$event->subscription->room->name}}
+                                            @if($event->comment)
+                                                <div class="event_extra" style="display: none;">
+                                                    Comment: {{ $event->comment }}
+                                                </div>
+                                            @endif
                                         </div>
                                 @endforeach
                                 @else

@@ -447,3 +447,12 @@ function delete_all_reservations(e) {
         });
     }
 }
+
+function show_extra(e) {
+    $(e).find('.event_extra').show();
+}
+
+function hide_extra(e) {
+    $(e).find('.event_extra').hide();
+}
+

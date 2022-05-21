@@ -15,6 +15,7 @@ class UpdateEventsTable extends Migration
     {
         Schema::table('events',function (Blueprint $table){
             $table->boolean('rescheduled')->default(false);
+            $table->longText('comment')->nullable();
         });
     }
 
@@ -27,6 +28,7 @@ class UpdateEventsTable extends Migration
     {
         Schema::table('events',function (Blueprint $table){
             $table->dropColumn('rescheduled');
+            $table->dropColumn('comment');
         });
     }
 }

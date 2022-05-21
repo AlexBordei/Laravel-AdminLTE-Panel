@@ -37,6 +37,14 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form group">
+                                    <label for="comment">Comment</label>
+                                    <textarea class="form-control" name="comment" id="comment" cols="30" rows="10">{{ $data['event']->comment  }}</textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">Update</button>
