@@ -18,6 +18,10 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+
+        DeleteReservationEvent::class => [
+            DeleteReservation::class
+        ]
     ];
 
     /**

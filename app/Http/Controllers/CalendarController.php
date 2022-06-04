@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DeleteReservationEvent;
 use App\Models\Event;
 use App\Models\Instrument;
 use App\Models\Reservation;
@@ -41,6 +42,11 @@ class CalendarController extends Controller
             $teacher = Teacher::where('id', $reservation->teacher_id)->first(['first_name', 'last_name']);
             $reservations[$key]->student = $student;
             $reservations[$key]->teacher = $teacher;
+
+            event(new DeleteReservationEvent($reservation[$key])); // nu stiu daca aici iti trb neapat, dar e un exemplu de apelare
+            // iar tu daca o sa ai nevoie oriunde acum, poti doar apela eventul asta
+            // poti sa ii pui si queues ca de ex daca tu ai 15 rezervari de sters una dupa alta sa nu se incetineasca aplicatia
+            // e doar un exemlu insa poti sa folosesti eventurile oriunde, sunt super folositoare mai ales pt performanta
         }
 
         array_filter($reservations->toArray(), function($e) use (&$grouped_reservations){
@@ -56,6 +62,7 @@ class CalendarController extends Controller
             unset($e['student']);
 
             $grouped_reservations['student_id_' . $e['student_id']]['reservations'][] = $e;
+
         });
 
         return $this->buildResponse('calendar.list', [
