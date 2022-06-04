@@ -349,6 +349,8 @@ $(function () {
     });
 
     //TBS
+    var external_events = $('.external-event').clone();
+
     $('#teacher_tbs').select2();
     $('#teacher_tbs').on('change', update_pending_events);
 
@@ -360,27 +362,69 @@ $(function () {
 
     $('#instrument_tbs').select2();
     $('#instrument_tbs').on('change', update_pending_events);
-    // $('.external-event').hide();
+
     function update_pending_events() {
         var teacher_id = $('#teacher_tbs').children(':selected').val();
         var student_id = $('#student_tbs').children(':selected').val();
         var room_id = $('#room_tbs').children(':selected').val();
         var instrument_id = $('#instrument_tbs').children(':selected').val();
 
+        $('#external-events').empty();
+        $('#external-events').append(external_events);
         $('.external-event').show();
         $('.external-event').each(function() {
+            $(this).attr('is_visible', true);
             update_external_event($(this), teacher_id.length > 0 && parseInt($(this).data('teacher_id')) !== parseInt(teacher_id));
             update_external_event($(this), student_id.length > 0 && parseInt($(this).data('student_id')) !== parseInt(student_id));
             update_external_event($(this), room_id.length > 0 && parseInt($(this).data('room_id')) !== parseInt(room_id));
             update_external_event($(this), instrument_id.length > 0 && parseInt($(this).data('instrument_id')) !== parseInt(instrument_id));
         });
 
+        var filtered_events = $('.external-event').clone();
+        var html = '';
+        if($(filtered_events).length > 0) {
+            html = '<div class="row">';
+            html += '   <div class="col-md-12">';
+            html += '       <div id="pendingEventsCarousel" class="carousel slide" data-ride="carousel">';
+            html += '           <div class="carousel-inner">';
+            html += '           </div>'
+            html += '       </div>'
+            html += '   </div>'
+            html += '</div>'
+        }
+
+        var carousel_container = $(html);
+
+        var i = 0;
+        $(filtered_events).each(function() {
+            if($(this).attr("is_visible") === "true") {
+                var carousel_item = $('<div></div>');
+
+                if( i % 4 === 0 ) {
+                    carousel_item.addClass('carousel-item');
+                    if(i === 0) {
+                        carousel_item.addClass('active');
+                    }
+                    carousel_item.append($('<div class="row"></div>'));
+                    carousel_container.find('.carousel-inner').append($(carousel_item));
+                }
+                var formated_card = $('<div class="col-md-3"></div>');
+                formated_card.append($(this));
+                carousel_container.find('.carousel-inner').find('.carousel-item').last().find('.row').append(formated_card);
+                i++;
+            }
+        });
+
+        $('#external-events').empty();
+        $('#external-events').append(carousel_container);
+
+        $('#pendingEventsCarousel').carousel();
+
         function update_external_event(elem, hide) {
-            if($(elem).is(":visible")) {
                 if(hide === true) {
+                    $(elem).attr('is_visible', false);
                     $(elem).hide();
                 }
-            }
         }
     }
 
@@ -416,6 +460,13 @@ $(function () {
         }
     });
 
+    $('#pendingEventsCarousel').carousel('pause');
+
+    $('#pendingEventsNavigator i').on('click', function() {
+        $('#pendingEventsCarousel').carousel($(this).data('direction'));
+    });
+
+    $('#pendingEventsNavigator').carousel('pause');
 });
 
 function remove_reservation(e) {
