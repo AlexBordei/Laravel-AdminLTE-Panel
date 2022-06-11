@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\DeleteGoogleCalendarEvent;
+use App\Listeners\DeleteGoogleCalendar;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -17,6 +19,9 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        DeleteGoogleCalendarEvent::class => [
+          DeleteGoogleCalendar::class
         ],
     ];
 

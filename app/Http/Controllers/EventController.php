@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DeleteGoogleCalendarEvent;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
@@ -158,8 +159,6 @@ class EventController extends Controller
 
         $old_status = $event->status;
         $event->status = $request->get('status');
-
-        $delete_event_status = false;
         $update_event_status = false;
 
         if(in_array($event->status, ['pending', 'canceled'])) {
@@ -167,17 +166,15 @@ class EventController extends Controller
             if($old_status === 'scheduled' && $event->status === 'pending') {
                 $event->rescheduled = true;
             }
-
-            $g_event_response = $this->delete_google_event($event);
-            $delete_event_status = $g_event_response;
+            event(new DeleteGoogleCalendarEvent($event));
         } else {
             $g_event_response = $this->update_google_event($event);
             $update_event_status = $g_event_response;
         }
 
-        if($delete_event_status === false && $update_event_status === true)  {
+        if($update_event_status === true)  {
             $event->google_event_id = $g_event_response->id;
-        } else if($delete_event_status === true && $update_event_status === false) {
+        } else {
             $event->google_event_id = null;
         }
 
@@ -202,7 +199,7 @@ class EventController extends Controller
     public function destroy(Event $event)
     {
         try {
-            $this->delete_google_event($event);
+            event(new DeleteGoogleCalendarEvent($event));
 
             $event->status = 'canceled';
             $event->save();
@@ -263,29 +260,6 @@ class EventController extends Controller
             return false;
         }
         return $g_event_response;
-    }
-    private function delete_google_event($event) {
-        if(!is_null($event->google_event_id)) {
-            try {
-                $subscription = Subscription::where('id', $event->subscription_id)->with('teacher')->first();
-
-                $g_event = null;
-                if (!empty($subscription->teacher->google_calendar_id)) {
-                    try {
-                        $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id, $subscription->teacher->google_calendar_id);
-                    } catch (Exception $e) {
-                        $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id);
-                    }
-                } else {
-                    $g_event = \Spatie\GoogleCalendar\Event::find($event->google_event_id);
-                }
-                $g_event->delete();
-                return true;
-            } catch (Exception $e) {
-                // TODO: add this to error notifications
-            }
-        }
-        return false;
     }
     private function update_google_event($event) {
         if(!empty($event->get('google_event_id'))) {
@@ -356,6 +330,7 @@ class EventController extends Controller
                 $event->save();
                 $weeks_number++;
             }
+
             // Reservations
             if(isset($_POST['timeslot_reservations']) && $_POST['timeslot_reservations'] === 'yes') {
                 for($i = $weeks_number; $i < $weeks_number + 24; $i++) {
@@ -373,6 +348,7 @@ class EventController extends Controller
                     $reservation->student_id = $event->subscription->student_id;
                     $reservation->teacher_id = $event->subscription->teacher_id;
                     $reservation->room_id = $event->subscription->room_id;
+                    $reservation->subscription_id = $event->subscription->id;
                     $reservation->save();
 
                     $g_event_response = $this->create_google_event($reservation, true);

@@ -35,9 +35,11 @@
                      data-starting="{{$event->starting->format('Y-m-d\TH:i:00')}}"
                      data-ending="{{$event->ending->format('Y-m-d\TH:i:00')}}"
                      data-teacher_id="{{$event->subscription->teacher->id}}"
+                     data-is_expired = "{{(int)$event->expired === 1 ? 'true': 'false'}}"
                      data-color="{{!empty($event->subscription->teacher->calendar_color) ? $event->subscription->teacher->calendar_color : '#007bff'}}"
                      data-edit='<a href="/event/{{$event->id}}/edit?redirect_calendar=yes">Click here to edit</a>'
                 ></div>
+
             @endforeach
         @endif
         @if(count($data['reservations']) > 0)
@@ -47,11 +49,7 @@
                          data-type="reservation"
                          data-student="{{$reservation->student->first_name}} {{$reservation->student->last_name}}"
                          data-teacher="{{$reservation->teacher->first_name}} {{$reservation->teacher->last_name}}"
-                         data-student_id="{{$event->subscription->student->id}}"
                          data-starting="{{$reservation->starting->format('Y-m-d\TH:i:00')}}"
-                         data-teacher_id="{{$event->subscription->teacher->id}}"
-                         data-instrument_id="{{$event->subscription->instrument->id}}"
-                         data-room_id="{{$event->subscription->room->id}}"
                          data-ending="{{$reservation->ending->format('Y-m-d\TH:i:00')}}"
                     ></div>
                 @endif

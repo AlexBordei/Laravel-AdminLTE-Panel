@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DeleteGoogleCalendarEvent;
 use App\Models\Event;
 use App\Models\Instrument;
 use App\Models\Reservation;
@@ -9,6 +10,7 @@ use App\Models\Room;
 use App\Models\Student;
 use App\Models\Subscription;
 use App\Models\Teacher;
+use Carbon\Carbon;
 
 class CalendarController extends Controller
 {
@@ -32,7 +34,9 @@ class CalendarController extends Controller
 
         foreach ($scheduled_events as $key => $event) {
             $subscription = Subscription::where('id', $event->subscription->id)->with(['student', 'teacher', 'instrument', 'room'])->first();
-
+            if($event->ending->lt(Carbon::now())) {
+                $scheduled_events[$key]->expired = true;
+            }
             $scheduled_events[$key]->subscription = $subscription;
         }
 
@@ -41,11 +45,18 @@ class CalendarController extends Controller
             $teacher = Teacher::where('id', $reservation->teacher_id)->first(['first_name', 'last_name']);
             $reservations[$key]->student = $student;
             $reservations[$key]->teacher = $teacher;
+
+            if((new Carbon($reservation['ending']))->lt(Carbon::now())) {
+                event(new DeleteGoogleCalendarEvent($reservations[$key]));
+                $reservations[$key]->delete();
+                unset($reservations[$key]);
+            }
         }
 
         array_filter($reservations->toArray(), function($e) use (&$grouped_reservations){
             $grouped_reservations['student_id_' . $e['student_id']] = array(
                 'student_id' => $e['student_id'],
+                'subscription_id' => $e['subscription_id'],
                 'first_name' => $e['student']['first_name'],
                 'last_name' => $e['student']['last_name'],
                 'reservations' => [],
@@ -57,6 +68,8 @@ class CalendarController extends Controller
 
             $grouped_reservations['student_id_' . $e['student_id']]['reservations'][] = $e;
         });
+
+
 
         return $this->buildResponse('calendar.list', [
             'events' => [

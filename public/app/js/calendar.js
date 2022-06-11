@@ -298,7 +298,8 @@ $(function () {
                 case 'reservation':
                     event.title =  'Reservation: ' + elem.data('student');
                     event.extendedProps = {
-                        'room_id': elem.data('room_id')
+                        'Room id': elem.data('room_id'),
+                        'Is expired': elem.data('is_expired')
                     };
                     event.extendedProps.type = 'reservation';
                     event.backgroundColor = '#c0c0c0';
@@ -314,7 +315,8 @@ $(function () {
                         'room_id': elem.data('room_id'),
                         'instrument': elem.data('instrument'),
                         'edit': elem.data('edit'),
-                        'type': 'event'
+                        'type': 'event',
+                        'Expired': elem.data('is_expired')
                     };
                     event.backgroundColor = elem.data('color');
                     break;

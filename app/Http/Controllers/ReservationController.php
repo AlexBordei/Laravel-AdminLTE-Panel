@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DeleteGoogleCalendarEvent;
 use App\Models\Reservation;
-use App\Models\Subscription;
-use Google\Service\Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -84,7 +83,7 @@ class ReservationController extends Controller
     public function destroy(Reservation $reservation)
     {
         try {
-            $this->delete_google_event($reservation);
+            event(new DeleteGoogleCalendarEvent($reservation));
             $reservation->deleteOrFail();
             return redirect()
                 ->back()
@@ -106,7 +105,7 @@ class ReservationController extends Controller
            $reservations = Reservation::where('student_id', $_POST['student_id'])->get();
 
            foreach ($reservations as $reservation) {
-               $this->delete_google_event($reservation);
+               event(new DeleteGoogleCalendarEvent($reservation));
                $reservation->deleteOrFail();
            }
             $response['error'] = false;
@@ -114,29 +113,5 @@ class ReservationController extends Controller
         }
 
         return new Response($response);
-    }
-
-    private function delete_google_event($reservation) {
-        if(!is_null($reservation->google_event_id)) {
-            try {
-                $subscription = Subscription::where('id', $reservation->subscription_id)->with('teacher')->first();
-
-                $g_event = null;
-                if (!empty($subscription->teacher->google_calendar_id)) {
-                    try {
-                        $g_event = \Spatie\GoogleCalendar\Event::find($reservation->google_event_id, $subscription->teacher->google_calendar_id);
-                    } catch (Exception $e) {
-                        $g_event = \Spatie\GoogleCalendar\Event::find($reservation->google_event_id);
-                    }
-                } else {
-                    $g_event = \Spatie\GoogleCalendar\Event::find($reservation->google_event_id);
-                }
-                $g_event->delete();
-                return true;
-            } catch (Exception $e) {
-                // TODO: add this to error notifications
-            }
-        }
-        return false;
     }
 }
